@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taalhuis isiZulu — CAPS-aligned isiZulu FAL</title>
+<style>
+  :root{
+    --navy:#1B2A4A;
+    --navy-light:#2E4270;
+    --gold:#D9A441;
+    --coral:#E2574C;
+    --cream:#F7F5EF;
+    --ink:#242130;
+    --green:#3F8F5C;
+    --white:#fff;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);}
+  h1,h2,h3,.display{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:800;}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 20px 60px;}
+
+  .hero{
+    background:linear-gradient(135deg,var(--navy) 0%, var(--navy-light) 100%);
+    border-radius:22px;padding:32px 26px;color:var(--white);position:relative;overflow:hidden;
+  }
+  .hero .tag{
+    display:inline-block;background:var(--gold);color:var(--navy);
+    font-weight:800;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:5px 12px;border-radius:20px;margin-bottom:12px;
+  }
+  .hero h1{font-size:36px;margin:0 0 8px;}
+  .hero p{margin:0;font-size:14.5px;opacity:0.9;max-width:560px;line-height:1.55;}
+  .hero .book{position:absolute;right:-10px;bottom:-24px;font-size:120px;opacity:0.12;}
+
+  .section-title{font-size:20px;margin:32px 0 12px;color:var(--navy);}
+
+  .grade-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .grade-pill{
+    background:var(--white);border:2px solid #e7e1d2;border-radius:12px;
+    padding:12px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;
+    color:var(--navy);cursor:pointer;transition:all .15s ease;
+  }
+  .grade-pill:hover{border-color:var(--gold);}
+  .grade-pill.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
+
+  .skill-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .skill-tab{
+    background:var(--white);border:2px solid #e7e1d2;border-radius:20px;
+    padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;color:#6b6355;
+    transition:all .15s ease;
+  }
+  .skill-tab:hover{border-color:var(--coral);}
+  .skill-tab.active{background:var(--coral);border-color:var(--coral);color:var(--white);}
+
+  .topic-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+  .topic-card{
+    background:var(--white);border-radius:14px;padding:16px 18px;
+    display:flex;justify-content:space-between;align-items:center;cursor:pointer;
+    border:2px solid transparent;transition:border-color .15s ease;
+  }
+  .topic-card:hover{border-color:var(--gold);}
+  .topic-card .info h3{margin:0 0 4px;font-size:16px;color:var(--navy);}
+  .topic-card .info span{font-size:12px;color:#8a8272;font-weight:700;}
+  .topic-card .term-tag{
+    background:#F0E9D8;color:var(--navy);font-weight:800;font-size:11px;
+    padding:4px 10px;border-radius:8px;white-space:nowrap;
+  }
+
+  .quiz-panel{background:var(--white);border-radius:18px;padding:22px;margin-top:18px;}
+  .quiz-panel h3{margin:0 0 4px;color:var(--navy);font-size:18px;}
+  .quiz-panel .meta{font-size:12px;color:#8a8272;font-weight:700;margin-bottom:16px;}
+  .q-text{font-size:16px;font-weight:700;margin-bottom:14px;color:var(--ink);}
+  .q-text-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;}
+  .q-text-row .q-text{margin-bottom:0;flex:1;}
+  .q-speak-btn{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--navy);
+    border:none;color:var(--white);cursor:pointer;font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .q-speak-btn:hover{background:var(--navy-light);}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{
+    background:var(--cream);border:2px solid #e7e1d2;border-radius:10px;
+    padding:11px 14px;cursor:pointer;font-weight:600;font-size:14.5px;
+    transition:all .12s ease;
+  }
+  .opt:hover{border-color:var(--gold);}
+  .opt.correct{background:#E8F5EC;border-color:var(--green);color:var(--green);}
+  .opt.wrong{background:#FBEAE8;border-color:var(--coral);color:var(--coral);}
+  .feedback{
+    margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13.5px;font-weight:600;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:#E8F5EC;color:var(--green);}
+  .feedback.no{background:#FBEAE8;color:var(--coral);}
+  .q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+  .nav-btn{
+    background:var(--navy);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:10px;cursor:pointer;
+  }
+  .nav-btn:disabled{opacity:0.4;cursor:default;}
+  .q-count{font-size:12.5px;font-weight:700;color:#8a8272;}
+  .score-summary{text-align:center;padding:20px;}
+  .score-summary .big{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:34px;color:var(--navy);font-weight:800;}
+  .hidden{display:none !important;}
+  footer{text-align:center;margin-top:34px;font-size:12px;color:#a89f8c;font-weight:600;}
+  .back-link{
+    display:inline-block;margin-top:14px;font-size:13px;font-weight:700;color:var(--navy);
+    cursor:pointer;text-decoration:underline;
+  }
+
+  /* diagnostic */
+  .diag-intro{
+    background:linear-gradient(135deg,#FBF6EA,#F5EAD3);border:2px dashed var(--gold);
+    border-radius:18px;padding:22px;margin-top:18px;text-align:center;
+  }
+  .diag-intro h3{margin:0 0 6px;color:var(--navy);font-size:19px;}
+  .diag-intro p{margin:0 0 16px;color:#6b6355;font-size:13.5px;font-weight:600;max-width:480px;margin-left:auto;margin-right:auto;}
+  .diag-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--coral);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:14px;padding:11px 22px;border-radius:11px;cursor:pointer;
+  }
+  .btn-secondary{
+    background:transparent;color:var(--navy);border:2px solid var(--navy);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:14px;padding:9px 20px;border-radius:11px;cursor:pointer;
+  }
+  .diag-progress{
+    height:6px;background:#eee2cd;border-radius:4px;overflow:hidden;margin-bottom:16px;
+  }
+  .diag-progress-bar{height:100%;background:var(--coral);transition:width .3s ease;}
+  .diag-results{background:var(--white);border-radius:18px;padding:24px;margin-top:18px;}
+  .diag-results h3{margin:0 0 4px;color:var(--navy);font-size:19px;}
+  .skill-bar-row{display:flex;align-items:center;gap:10px;margin:10px 0;}
+  .skill-bar-label{width:230px;font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0;}
+  .skill-bar-track{flex:1;height:14px;background:#eee2cd;border-radius:7px;overflow:hidden;}
+  .skill-bar-fill{height:100%;border-radius:7px;}
+  .skill-bar-pct{width:42px;text-align:right;font-size:12px;font-weight:800;color:#6b6355;}
+  .diag-plan{
+    background:#F7F5EF;border-radius:12px;padding:16px 18px;margin-top:18px;
+  }
+  .diag-plan h4{margin:0 0 8px;color:var(--navy);font-size:14.5px;}
+  .diag-plan ul{margin:0;padding-left:20px;}
+  .diag-plan li{font-size:13.5px;margin-bottom:5px;font-weight:600;color:#4a4436;}
+  .tag-strength{color:var(--green);font-weight:800;}
+  .tag-needs{color:var(--coral);font-weight:800;}
+
+  /* mode toggle */
+  .mode-toggle{margin-top:18px;display:flex;gap:8px;}
+  .mode-btn{
+    background:rgba(255,255,255,0.12);color:var(--white);border:2px solid rgba(255,255,255,0.25);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:700;font-size:13px;padding:8px 16px;
+    border-radius:10px;cursor:pointer;transition:all .15s ease;
+  }
+  .mode-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+
+  /* teacher dashboard */
+  .perf-table{background:var(--white);border-radius:16px;padding:10px;margin-top:6px;}
+  .perf-row{
+    display:grid;grid-template-columns:1fr 90px 130px;gap:12px;align-items:center;
+    padding:13px 14px;border-radius:10px;cursor:pointer;transition:background .15s ease;
+  }
+  .perf-row:hover{background:#F7F5EF;}
+  .perf-row.selected{background:#FDF3E9;}
+  .perf-row .topic-name{font-size:14px;font-weight:700;color:var(--ink);}
+  .perf-row .topic-skill{font-size:11.5px;color:#9a9182;font-weight:600;}
+  .perf-row .pct-badge{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:800;font-size:14px;text-align:right;
+  }
+  .perf-row .bar-track{height:10px;background:#eee2cd;border-radius:6px;overflow:hidden;}
+  .perf-row .bar-fill{height:100%;border-radius:6px;}
+  .perf-row .warn{color:var(--coral);}
+  .intervention-panel{
+    background:var(--white);border-radius:18px;padding:22px;margin-top:16px;border-left:5px solid var(--coral);
+  }
+  .intervention-panel h3{margin:0 0 6px;color:var(--navy);font-size:17px;}
+  .intervention-panel .stat-line{font-size:14px;font-weight:700;color:var(--coral);margin-bottom:12px;}
+  .intervention-panel .rec-box{
+    background:#FDF3E9;border-radius:10px;padding:14px 16px;font-size:13.5px;font-weight:600;color:#4a4436;
+  }
+  .assign-btn{
+    margin-top:14px;background:var(--navy);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:10px;cursor:pointer;
+  }
+  .assign-btn.done{background:var(--green);cursor:default;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="book">📗</div>
+    <span class="tag">CAPS-aligned · isiZulu Ulimi Lokuqala Olwengeziwe (FAL)</span>
+    <h1>Taalhuis isiZulu</h1>
+    <p>Uhlelo olugcwele lokufunda nokusiza abafundi be-Grade 8–12, olwakhelwe ngokulandela i-CAPS: ibanga → ikhono → isihloko — hhayi uhlelo lohlelo lolimi kuphela.</p>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="learnerModeBtn">🎓 Umfundi</button>
+      <button class="mode-btn" id="teacherModeBtn">🧑‍🏫 Uthisha</button>
+    </div>
+  </div>
+
+  <div id="learnerSection">
+  <h2 class="section-title">Khetha ibanga lakho / Choose your grade</h2>
+  <div class="grade-row" id="gradeRow"></div>
+
+  <div id="diagnosticIntro" class="diag-intro hidden">
+    <h3>🎯 Ake sithole izinga lakho lesiZulu!</h3>
+    <p>Uvivinyo olufushane olunemibuzo engaba yi-8 emikhonweni yonke emihlanu. Sizokukhombisa ngqo lapho unamandla khona nalapho kudingeka khona ukuzijwayeza kuqala.</p>
+    <div class="diag-btns">
+      <button class="btn-primary" id="startDiagBtn">Qala uvivinyo</button>
+      <button class="btn-secondary" id="skipDiagBtn">Yeqa</button>
+    </div>
+  </div>
+
+  <div id="diagnosticQuiz" class="quiz-panel hidden"></div>
+  <div id="diagnosticResults" class="hidden"></div>
+
+  <div id="skillSection" class="hidden">
+    <h2 class="section-title">Isigaba Sekhono / Skill area</h2>
+    <div class="skill-tabs" id="skillTabs"></div>
+    <div class="topic-list" id="topicList"></div>
+  </div>
+  </div>
+
+  <!-- ============ TEACHER DASHBOARD ============ -->
+  <div id="teacherSection" class="hidden">
+    <h2 class="section-title">Khetha ikilasi / Choose class</h2>
+    <div class="grade-row" id="classRow"></div>
+
+    <div id="classDashboard" class="hidden">
+      <h2 class="section-title">Ukusebenza Ngesihloko / Topic performance</h2>
+      <div class="perf-table" id="perfTable"></div>
+
+      <div id="interventionPanel" class="intervention-panel hidden"></div>
+    </div>
+  </div>
+
+  <div id="quizSection" class="quiz-panel hidden"></div>
+
+  <footer>Taalhuis isiZulu — CAPS-aligned isiZulu FAL learning &amp; intervention platform for South African schools</footer>
+</div>
+
+<script>
+const SKILLS = [
+  {id:"struct", label:"Ukwakheka Kolimi (Language structures)", icon:"🧩"},
+  {id:"vocab", label:"Amagama (Vocabulary)", icon:"📚"},
+  {id:"reading", label:"Ukuqonda Okufundiwe (Reading)", icon:"📖"},
+  {id:"writing", label:"Ukubhala (Writing)", icon:"✍️"},
+  {id:"exam", label:"Amasu Okuhlolwa (Exam technique)", icon:"⏱️"},
+];
+
+function q(text, opts, correctIndex, explain){
+  return {text, opts, correctIndex, explain};
+}
+
+const DATA = {
+  8: {
+    struct: [
+      {topic:"Izimo Zomenzi — Isikhathi Samanje (Subject concords)", term:"Ikota 1", questions:[
+        q("Yiphi imo efanele: 'Mina ___ hamba' (I am going)?", ["ngiya","uya","siya","baya"], 0, "'Ngi-' yimo yomenzi yesenzukuqu sokuqala esisodwa (mina/I)."),
+        q("Yiphi imo efanele: 'Wena ___ funda' (you are reading)?", ["uya","ngiya","siya","niya"], 0, "'U-' yimo yomenzi yesenzukuqu sesibili esisodwa (wena/you)."),
+      ]},
+      {topic:"Ukuphika Kwesenzo (Negation — present tense)", term:"Ikota 2", questions:[
+        q("Yiphi indlela efanele yokuphika: 'Ngiyahamba' (I am going)?", ["Angihambi","Ngihamba","Ngiyahamba kakhulu","Sihambi"], 0, "Uphika ngokusebenzisa 'a-' ekuqaleni no-'-i' ekugcineni: 'Angihambi'."),
+        q("Yiphi indlela efanele yokuphika: 'Uyafunda' (s/he is reading)?", ["Akafundi","Ufunda","Uyafunda kakhulu","Bafundi"], 0, "'Aka-...-i' iyindlela yokuphika esenzweni sesenzukuqu sesithathu esisodwa."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Ukubingelela Nomndeni (Greetings & Family)", term:"Ikota 1", questions:[
+        q("'Sawubona' isho ukuthini?", ["Hello (to one person)","Goodbye","Thank you","Sorry"], 0, "'Sawubona' yindlela yokubingelela umuntu oyedwa."),
+        q("'Umama' isho ukuthini?", ["Mother","Father","Sister","Brother"], 0, "'Umama' isho u-mother/mama."),
+      ]},
+      {topic:"Izinombolo 1–10 (Numbers)", term:"Ikota 2", questions:[
+        q("'Isithupha' iyinombolo mangaki?", ["6","5","7","8"], 0, "'Isithupha' isho inombolo u-6."),
+        q("'Isihlanu' iyinombolo mangaki?", ["5","4","6","10"], 0, "'Isihlanu' isho inombolo u-5."),
+      ]},
+    ],
+    reading: [
+      {topic:"Injongo Yesifinyezo (Purpose of a summary)", term:"Ikota 1", questions:[
+        q("Yini injongo yesifinyezo?", ["Ukunikeza amaphuzu asemqoka ngamafuphi","Ukuloba yonke into futhi","Ukusho umbono wakho kuphela","Ukungeza imininingwane emisha"], 0, "Isifinyezo sinikeza amaphuzu asemqoka kuphela, ngaphandle kwemininingwane engadingekile."),
+      ]},
+      {topic:"Ukulandela Imiyalelo (Following instructions)", term:"Ikota 2", questions:[
+        q("Kubalulekile ngani ukufunda imiyalelo ngokucophelela?", ["Ukuze uqedele umsebenzi ngokulandelana okufanele","Ukuze ubhale ngokushesha kakhulu","Ukuze uziyekele imiyalelo","Akunamqondo"], 0, "Ukufunda imiyalelo ngokucophelela kuqinisekisa ukuthi wenza izinyathelo ngendlela efanele."),
+      ]},
+    ],
+    writing: [
+      {topic:"Incwadi Engagcwele — Isakhiwo (Informal letter format)", term:"Ikota 2", questions:[
+        q("Yiliphi ibinzana lokubingelela elifanele incwadi engagcwele?", ["Sawubona/Mngane wami","Kuya kubaphathi abahloniphekile","Kunoma ubani okungenzeka kuqondene naye","Ngiyabonga kakhulu"], 0, "Incwadi engagcwele isebenzisa ibinzana elinobungane elifana ne-'Sawubona' noma 'Mngane wami'."),
+      ]},
+      {topic:"Isimemo (Invitation)", term:"Ikota 3", questions:[
+        q("Yiluphi ulwazi okufanele lube khona esimeni njalo?", ["Usuku, isikhathi nendawo yomcimbi","Igama lomenywa kuphela","Indaba ende ngomcimbi","Akukho lutho oluqondile"], 0, "Isimemo kufanele sicace ngokuphelele ngesikhathi nendawo yomcimbi."),
+      ]},
+    ],
+    exam: [
+      {topic:"Ukuphathwa Kwesikhathi Ekuhloleni (Exam time management)", term:"Ikota 4", questions:[
+        q("Yisiphi isinyathelo esihle kakhulu sokuqala ekuhlolweni kolimi?", ["Funda yonke imibuzo kuqala","Qala ukubhala ngokushesha ngaphandle kokufunda","Yeqa isigaba esinzima kakhulu","Bhala umbuzo wokugcina kuqala"], 0, "Ukufunda yonke imibuzo kuqala kukusiza uhlele isikhathi sakho kangcono."),
+      ]},
+      {topic:"Amagama Ombuzo (Question words)", term:"Ikota 1", questions:[
+        q("Yiliphi igama lombuzo elibuza ngendawo?", ["Kuphi","Ubani","Kanjani","Nini"], 0, "'Kuphi' libuza ngendawo (where)."),
+      ]},
+    ],
+  },
+  9: {
+    struct: [
+      {topic:"Isikhathi Esidlulile (Past tense)", term:"Ikota 1", questions:[
+        q("Izolo ___ (I went) esikoleni.", ["ngahamba","ngiyahamba","ngizohamba","ngihamba"], 0, "'Ngahamba' iyisimo sesikhathi esidlulile — into eyenzeka izolo."),
+        q("Sikhethe isenzo esifanele: 'Yena ___ incwadi' (s/he read a book).", ["wafunda","uyafunda","uzofunda","funda"], 0, "'Wafunda' iyisimo sesikhathi esidlulile sesenzukuqu sesithathu esisodwa."),
+      ]},
+      {topic:"Isikhathi Esizayo (Future tense)", term:"Ikota 2", questions:[
+        q("Kusasa ___ (I will go) ebhayisikobho.", ["ngizohamba","ngahamba","ngihamba","ngiyahamba"], 0, "'Ngizo-' + isenzo yakha isikhathi esizayo."),
+        q("Bazo___(they will study) kusasa.", ["funda","hamba","dla","lala"], 0, "'Bazofunda' — 'bazo-' yisimo sesikhathi esizayo sabo (they)."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Umndeni Owandisiwe (Extended family)", term:"Ikota 1", questions:[
+        q("'Umzala' isho ukuthini?", ["Cousin","Uncle","Aunt","Grandfather"], 0, "'Umzala' isho u-cousin."),
+      ]},
+      {topic:"Ukudla (Food)", term:"Ikota 2", questions:[
+        q("'Isinkwa' isho ukuthini?", ["Bread","Milk","Meat","Water"], 0, "'Isinkwa' isho u-bread."),
+        q("'Amanzi' isho ukuthini?", ["Water","Meat","Rice","Sugar"], 0, "'Amanzi' isho u-water."),
+      ]},
+    ],
+    reading: [
+      {topic:"Amaqiniso Nemibono (Facts vs Opinions)", term:"Ikota 2", questions:[
+        q("Yikuphi okuyiqiniso, hhayi umbono?", ["Isikole sinabafundi abangu-500.","Isikole yisona esihle kunazo zonke edolobheni.","IsiZulu silula.","Wonke umuntu uthanda izibalo."], 0, "Iqiniso lingafakazelwa; umbono ungowobuqu."),
+      ]},
+      {topic:"Ukuqonda Indaba Emfushane (Short story comprehension)", term:"Ikota 3", questions:[
+        q("Yini 'isiqu sendaba' (plot)?", ["Ukulandelana kwezehlakalo endabeni","Igama lombhali","Isihloko sencwadi","Indawo eyanyatshelwa incwadi"], 0, "Isiqu sendaba sibhekisela ekutheni izehlakalo zilandelana kanjani endabeni."),
+      ]},
+    ],
+    writing: [
+      {topic:"Ukubhala Edayari (Diary entry)", term:"Ikota 2", questions:[
+        q("Incwadi yedayari ivamise ukubhalwa ngokuhlanganyela kuphi?", ["Kokokuqala okulodwa (mina)","Kwesibili okulodwa (wena)","Kwesithathu okulodwa (yena)","Ngendlela engaqondile"], 0, "Idayari iyimvelo yobuqu futhi ibhalwa ngokuhlanganyela kokuqala okulodwa."),
+      ]},
+      {topic:"Umlayezo Ku-WhatsApp/SMS", term:"Ikota 3", questions:[
+        q("Yimuphi umoya ovamile womlayezo ongagcile kumngane?", ["Omfushane, ongagcwele futhi onobungane","Omude futhi osemthethweni kakhulu","Oqinile futhi onenkani","Ongenabo ubungane nhlobo"], 0, "Imilayezo eya kubangani ngokuvamile ifushane futhi ingagcwele."),
+      ]},
+    ],
+    exam: [
+      {topic:"Amagama Asemqoka Emibuzweni (Key question words)", term:"Ikota 3", questions:[
+        q("Umbuzo othi 'chaza' ufuna ini?", ["Incazelo egcwele/isizathu","U-'yebo' noma 'cha' kuphela","Uhlu ngaphandle kwemininingwane","Umdwebo"], 0, "'Chaza' ufuna impendulo egcwele nechazayo, hhayi iqiniso elifushane kuphela."),
+      ]},
+      {topic:"Ukuhlaziya Imibuzo Yangaphambilini (Analysing past papers)", term:"Ikota 4", questions:[
+        q("Kubalulekile ngani ukuzijwayeza amaphepha ahlolwe ngaphambili?", ["Akhombisa uhlobo lwemibuzo nesakhiwo esilindelekile","Kuyisikhathi esimoshakalayo","Kuthatha indawo yohlelo lokufundwa ngokuphelele","Kuwusizo kuphela kothisha"], 0, "Amaphepha adlule akhombisa uhlobo lwemibuzo, isakhiwo, nezinga lobunzima okulindelwe abafundi."),
+      ]},
+    ],
+  },
+  10: {
+    struct: [
+      {topic:"Ukuvumelana Kwebizo Nesenzo (Noun class agreement basics)", term:"Ikota 1", questions:[
+        q("Sikhethe okufanele: 'Abantu ___ hamba' (the people are going).", ["bayahamba","uyahamba","siyahamba","liyahamba"], 0, "'Aba-' yisigaba sebizo (isigaba 2 — abantu abaningi), ngakho isenzo sisebenzisa 'ba-'."),
+      ]},
+      {topic:"Isenzo Esenziwayo Nesenzayo (Active and passive — basic)", term:"Ikota 2", questions:[
+        q("Kuliphi ibinzana elikhombisa isenzo esenziwayo (passive): 'Inja iluma ikati.'?", ["Ikati liyalunywa yinja.","Inja iluma ikati.","Ikati liluma inja.","Inja izolume ikati."], 0, "Esimweni esenziwayo, into eyenzelwayo iba yisihloko somusho: 'iyalunywa'."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Umsebenzi Nezinsizakusebenza (Work and careers)", term:"Ikota 1", questions:[
+        q("'Usomabhizinisi' isho ukuthini?", ["Entrepreneur/businessperson","Employee","Teacher","Student"], 0, "'Usomabhizinisi' isho umuntu oqala noma osebenzisa ibhizinisi lakhe."),
+      ]},
+      {topic:"Ukuhamba Nezokuvakasha (Travel and tourism)", term:"Ikota 2", questions:[
+        q("'Ipasipoti' isho ukuthini?", ["Passport","Ticket","Suitcase","Map"], 0, "'Ipasipoti' isho u-passport, edingekayo ekuhambeni kwamazwe ngamazwe."),
+      ]},
+    ],
+    reading: [
+      {topic:"Ukuhlaziya Isikhangiso (Analysing an advert)", term:"Ikota 2", questions:[
+        q("Yini injongo yesiqubulo (slogan) esikhangisweni?", ["Ukukhumbuleka kalula futhi kukhuthaze umkhiqizo","Ukunikeza yonke imininingwane ebucayi","Ukukhombisa intengo kuphela","Ukulanda umlando wenkampani"], 0, "Isiqubulo sifushane futhi sikhumbuleka kalula, senzelwe ukukhuthaza umkhiqizo."),
+      ]},
+      {topic:"Ukuqonda Umbhalo Obonakalayo (Visual text comprehension)", term:"Ikota 3", questions:[
+        q("Yini okufanele uyibheke uma uhlaziya umfanekiso nombhalo ndawonye?", ["Indlela umfanekiso nombhalo okusebenzisana ngayo ukudlulisa umyalezo","Ubukhulu befonti kuphela","Umbala wombhalo kuphela","Igama lomdwebi kuphela"], 0, "Umbhalo obonakalayo uhlanganisa umfanekiso nombhalo ukudlulisa umyalezo ndawonye."),
+      ]},
+    ],
+    writing: [
+      {topic:"Incwadi Esemthethweni — Isikhalazo (Formal complaint letter)", term:"Ikota 3", questions:[
+        q("Yimuphi umoya ofanele incwadi esemthethweni yesikhalazo?", ["Enenhlonipho futhi eqondile","Engagcwele futhi enokuhlekisa","Ethukuthele futhi enolaka","Emfishane engenamininingwane"], 0, "Incwadi esemthethweni yesikhalazo kufanele ihlale inenhlonipho futhi iqonde inhloso, ngisho noma umbhali engathokozile."),
+      ]},
+      {topic:"Isimemo Esisemthethweni (Formal invitation)", term:"Ikota 3", questions:[
+        q("Isimemo esisemthethweni sidinga siphi isitayela?", ["Esihlanzekile, esicacile futhi esisemthethweni","Esixegayo nesingagcwele","Esigcwele ngamahlaya","Ngaphandle kwesakhiwo nhlobo"], 0, "Isimemo esisemthethweni kufanele sibe nesakhiwo esicacile futhi sibe semthethweni."),
+      ]},
+    ],
+    exam: [
+      {topic:"Ukuqonda Amamaki (Understanding mark allocation)", term:"Ikota 4", questions:[
+        q("Uma umbuzo ufaneleke amamaki angu-5, kusho ukuthini ngokuvamile?", ["Kufanele usho amaphuzu/imibono engaba ngu-5 ehlukene","Igama elilodwa lanele","Bhala isihloko kuphela","Akunandaba ukuthi ubhala kangakanani"], 0, "Ukwabiwa kwamamaki kuvame ukukhombisa ukuthi kulindeleke amaphuzu amangaki ahlukene."),
+      ]},
+      {topic:"Ukusetshenziswa Kwamanqamu Okucaphuna (Use of quotation marks)", term:"Ikota 2", questions:[
+        q("Kungani usebenzisa amanqamu okucaphuna esiqeshini?", ["Ukukhombisa amazwi athathwe ngqo komunye umuntu","Ukwenza isiqeshi sibe side","Ukukhombisa amaphutha okupela","Akunanjongo"], 0, "Amanqamu okucaphuna akhombisa lapho ucaphuna amazwi ngqo athathwe komunye umuntu."),
+      ]},
+    ],
+  },
+  11: {
+    struct: [
+      {topic:"Inkulumo Eqondile Nengaqondile (Direct and indirect speech)", term:"Ikota 1", questions:[
+        q("Uthi: 'Ngikhathele.' → Inkulumo engaqondile:", ["Uthe ukhathele.","Uthi ngikhathele.","Uthe ngikhathele.","Uthi ubekhathele."], 0, "Enkulumeni engaqondile, ubuqu buguqula kusuka ku-'ngi-' kuya ku-'u-', kanti isikhathi sesenzo siyaguquka."),
+      ]},
+      {topic:"Izandiso Zesenzo (Adverbs — basic)", term:"Ikota 3", questions:[
+        q("Yiliphi igama eliyisandiso ku: 'Uhamba ngokushesha.' (He walks quickly)?", ["ngokushesha","uhamba","yena","."], 0, "'Ngokushesha' sichaza ukuthi uhamba kanjani, ngakho siyisandiso."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Izisho (Idioms)", term:"Ikota 2", questions:[
+        q("'Ukudla inhliziyo' kusho ukuthini?", ["Ukukhathazeka kakhulu","Ukudla ngempela","Ukugcina imfihlo","Ukuthanda kakhulu"], 0, "Lesi sisho sisho ukukhathazeka noma ukucindezeleka ngokujulile."),
+      ]},
+      {topic:"Imvelo Nokuqhubeka (Environment and sustainability)", term:"Ikota 3", questions:[
+        q("'Ukuqhubeka' (sustainable) kusho ukuthini?", ["Okungaqhubeka isikhathi eside ngaphandle kokonakala","Okubiza kakhulu","Okuhlala isikhashana kuphela","Okuyingozi"], 0, "'Ukuqhubeka' kusho into engaqhubeka isikhathi eside ngaphandle kokulimaza indawo."),
+      ]},
+    ],
+    reading: [
+      {topic:"Ukuhlaziya Inkondlo — Isihloko Nomoya (Poem analysis)", term:"Ikota 2", questions:[
+        q("Kushiwo ukuthini ngo-'moya' wenkondlo?", ["Umuzwa/isimo umbhali asidlulisayo","Inani lemigqa enkondlweni","Isihloko senkondlo","Ubudala bombhali"], 0, "Umoya ubhekisela esimeni somuzwa esidluliswa ngokusetshenziswa kwamagama nesitayela."),
+      ]},
+      {topic:"Indaba Emfushane — Uphawu (Short story symbolism)", term:"Ikota 3", questions:[
+        q("Yini 'uphawu' (symbolism) endabeni?", ["Lapho into imele incazelo ejulile kunengqondo yayo yangempela","Ubude bendaba","Igama lomlingiswa oyinhloko","Indawo lapho indaba yenzeka khona"], 0, "Uphawu wukusetshenziswa kwento, umbala noma isenzakalo ukumela incazelo ejulile kunengqondo yayo yangempela."),
+      ]},
+    ],
+    writing: [
+      {topic:"Isihloko Sombono (Opinion piece)", term:"Ikota 3", questions:[
+        q("Yini okufanele ibe khona esihlokweni esihle sombono?", ["Umbono ocacile ngezizathu ezisekelayo","Amaqiniso kuphela ngaphandle kombono","Imibuzo kuphela ngaphandle kwezimpendulo","Indaba ngaphandle kombono"], 0, "Isihloko sombono kufanele sisho umbono ocacile futhi sisekele ngezizathu."),
+      ]},
+      {topic:"Umbiko (Report writing)", term:"Ikota 4", questions:[
+        q("Isakhiwo esivamile sombiko osemthethweni yisiphi?", ["Isingeniso, okutholakele, nezincomo","Isigaba esisodwa esidle side ngaphandle kwezihloko","Isakhiwo senkondlo","Ingxoxo phakathi kwabantu ababili"], 0, "Umbiko osemthethweni uvame ukuba nesakhiwo esicacile esinesingeniso, okutholakele, nezincomo."),
+      ]},
+    ],
+    exam: [
+      {topic:"Ukuhlela Impendulo Ende (Structuring a long answer)", term:"Ikota 4", questions:[
+        q("Yisiphi isinyathelo esihle sokuqala embuzweni omude wesiqephu?", ["Yenza uhlaka oluncane ngaphambi kokubhala","Bhala ngokushesha ngaphandle kokuhlela","Yeqa umbuzo","Kopisha impendulo yangaphambili"], 0, "Uhlaka oluncane lukusiza uhlele imicabango yakho ngaphambi kokuqala ukubhala."),
+      ]},
+      {topic:"Ukwabiwa Kwesikhathi Emibuzweni Emide (Time allocation)", term:"Ikota 1", questions:[
+        q("Kufanele wabele isikhathi sakho kanjani ekuhlolweni onezigaba ezahlukene?", ["Ngokuya ngamamaki alelo zigaba", "Isikhathi esifanayo kuwo wonke umbuzo, kungakhathaliseki amamaki", "Kwimibuzo elula kuphela", "Akunandaba"], 0, "Ukwabela isikhathi ngokuya ngamamaki kuqinisekisa ukuthi awuchithi isikhathi eside emibuzweni enamamaki amancane."),
+      ]},
+    ],
+  },
+  12: {
+    struct: [
+      {topic:"Izabizwana (Pronouns — revision)", term:"Ikota 1", questions:[
+        q("Khetha isabizwana esifanele: '___ baqedile umsebenzi wasekhaya.' (They finished the homework.)", ["Bona","Yena","Mina","Wena"], 0, "'Bona' yisabizwana esifanele isibonelo sabantu abaningi (they)."),
+      ]},
+      {topic:"Ukuhlaziywa Komusho (Sentence analysis — revision)", term:"Ikota 2", questions:[
+        q("Yini isihloko somusho ku: 'Abafundi bayabhala uvivinyo.'?", ["Abafundi","bayabhala","uvivinyo","."], 0, "Isihloko yilowo owenza isenzo — 'abafundi'."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Amagama Ezemfundo (Academic vocabulary)", term:"Ikota 1", questions:[
+        q("'Isicaphuno' isho ukuthini?", ["Quotation","Question","Answer","Introduction"], 0, "'Isicaphuno' isho amazwi athathwe ngqo emthonjeni othile."),
+      ]},
+      {topic:"Ulimi Oluqondisiwe (Rhetorical language)", term:"Ikota 2", questions:[
+        q("Yini 'umbuzo ongafuni impendulo' (rhetorical question)?", ["Umbuzo ongalindele impendulo, kodwa ogcizelela iphuzu","Umbuzo onempendulo eyodwa kuphela","Umbuzo onempendulo ethi 'yebo' njalo","Umbuzo ongenamqondo"], 0, "Umbuzo ongafuni impendulo ubuzwa ukugcizelela iphuzu, hhayi ukuthola impendulo ngempela."),
+      ]},
+    ],
+    reading: [
+      {topic:"Ukuhlaziya Umlingiswa (Character analysis)", term:"Ikota 2", questions:[
+        q("Yini 'ukukhula komlingiswa'?", ["Indlela umlingiswa aguquka ngayo endabeni","Igama lomlingiswa","Inani labalingiswa encwadini","Umlando wombhali"], 0, "Ukukhula komlingiswa kuchaza indlela umlingiswa akhula noma aguquke ngayo ngokuya kwendaba."),
+      ]},
+      {topic:"Umdlalo — Ukungqubuzana Nesihloko (Drama — conflict and theme)", term:"Ikota 3", questions:[
+        q("Yini 'isihloko' somdlalo?", ["Umyalezo ohlala njalo womsebenzi","Igama lomlingisi","Indawo lapho kudlalwa khona","Ubude bomdlalo"], 0, "Isihloko yilo myalezo ohlala njalo umbhali awudlulisayo ngomsebenzi wakhe."),
+      ]},
+    ],
+    writing: [
+      {topic:"Isinqumo Esiphikisanayo (Argumentative essay)", term:"Ikota 3", questions:[
+        q("Yini injongo yesiqephu esiphikisanayo?", ["Ukukholisa ngombono onobufakazi","Ukuxoxa indaba kuphela","Ukuloba amaqiniso ngaphandle kombono","Ukubhala inkondlo"], 0, "Isiqephu esiphikisanayo sizama ukukholisa umfundi ngezizathu ezinengqondo nobufakazi."),
+      ]},
+      {topic:"Umbiko Osemthethweni (Formal report/submission)", term:"Ikota 3", questions:[
+        q("Yini eyenza umbiko/isethulo sibe 'esisemthethweni'?", ["Isakhiwo esicacile, umoya oqondile nolimi olufanele","Ama-emoji amaningi nolimi olungagcwele","Ngaphandle kwezihloko noma isakhiwo","Imibono yobuqu kuphela ngaphandle kobufakazi"], 0, "Umbiko osemthethweni unesakhiwo esicacile, umoya oqondile, nolimi olufanele, olusemthethweni."),
+      ]},
+    ],
+    exam: [
+      {topic:"Ukulungiselela Ukuhlolwa Kokugcina (Final exam preparation)", term:"Ikota 4", questions:[
+        q("Yini encomekayo evikini lokugcina ngaphambi kokuhlolwa?", ["Buyekeza imiqondo esemqoka wenze imibuzo yokuzijwayeza","Funda okusha okuphelele okokuqala","Ungabuyekezi neze","Gxila kuphela esigabeni esisodwa"], 0, "Evikini lokugcina, kungcono ukubuyekeza nokuzijwayeza kunokufunda okuqukethwe okusha."),
+      ]},
+      {topic:"Isu Lokuhlolwa Kokugcina Kwebanga 12 (Matric exam strategy)", term:"Ikota 4", questions:[
+        q("Yisiphi isu esincomekayo uma uhlangabezana nombuzo onzima?", ["Uwuyeke okwesikhashana bese uqhubeka nomunye umbuzo","Ubambelele kuwo kuze kuphele isikhathi","Uyekele ngokushesha","Ubhala noma yini ngaphandle kokucabanga"], 0, "Ukuyeka umbuzo onzima okwesikhashana kuqinisekisa ukuthi awulahlekelwa isikhathi esiligugu kwezinye izimpendulo."),
+      ]},
+    ],
+  }
+};
+
+// --- Audio: prefers a real recorded clip, falls back to the browser's
+// text-to-speech if no clip exists yet. To add real recordings, drop an
+// mp3 named after the question's slug into audio/zu/ — no code changes
+// needed, this picks it up automatically.
+function speakZulu(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'zu-ZA';
+  utter.rate = 0.85;
+  const voices = window.speechSynthesis.getVoices();
+  // isiZulu voices are rare, so fall back through the closest relatives
+  // (isiXhosa is the next-closest Nguni language) before plain English.
+  const fallbackLangs = ['zu-ZA','zu','xh-ZA','xh','en-ZA','en-GB','en-US','en'];
+  let match = null;
+  for(const code of fallbackLangs){
+    match = voices.find(v => v.lang === code) || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(code.toLowerCase()));
+    if(match) break;
+  }
+  if(match) utter.voice = match;
+  window.speechSynthesis.speak(utter);
+}
+if('speechSynthesis' in window){ window.speechSynthesis.getVoices(); }
+
+function slugifyZulu(text){
+  return text.toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'')
+    .substring(0, 60);
+}
+function playZuluText(text){
+  const src = `audio/zu/${slugifyZulu(text)}.mp3`;
+  const audio = new Audio(src);
+  audio.addEventListener('error', ()=> speakZulu(text), {once:true});
+  const playPromise = audio.play();
+  if(playPromise && playPromise.catch){
+    playPromise.catch(()=> speakZulu(text));
+  }
+}
+
+let currentGrade = null;
+let currentSkill = null;
+let currentTopic = null;
+let qIndex = 0;
+let score = 0;
+let answered = [];
+
+const learnerSection = document.getElementById('learnerSection');
+const teacherSection = document.getElementById('teacherSection');
+const learnerModeBtn = document.getElementById('learnerModeBtn');
+const teacherModeBtn = document.getElementById('teacherModeBtn');
+const gradeRow = document.getElementById('gradeRow');
+
+learnerModeBtn.addEventListener('click', ()=>{
+  learnerModeBtn.classList.add('active');
+  teacherModeBtn.classList.remove('active');
+  learnerSection.classList.remove('hidden');
+  teacherSection.classList.add('hidden');
+  quizSection.classList.add('hidden');
+});
+teacherModeBtn.addEventListener('click', ()=>{
+  teacherModeBtn.classList.add('active');
+  learnerModeBtn.classList.remove('active');
+  teacherSection.classList.remove('hidden');
+  learnerSection.classList.add('hidden');
+  quizSection.classList.add('hidden');
+  renderClassRow();
+});
+
+/* ---------------- Teacher dashboard mock data ---------------- */
+const TEACHER_DATA = {
+  "Ibanga 9A": {grade:9, total:34, topics:[
+    {topic:"Isikhathi Esidlulile", skillLabel:"Ukwakheka Kolimi", pct:82, struggling:6},
+    {topic:"Umndeni Owandisiwe", skillLabel:"Amagama", pct:88, struggling:4},
+    {topic:"Amaqiniso Nemibono", skillLabel:"Ukuqonda Okufundiwe", pct:74, struggling:9},
+    {topic:"Ukubhala Edayari", skillLabel:"Ukubhala", pct:69, struggling:11},
+    {topic:"Amagama Asemqoka Emibuzweni", skillLabel:"Amasu Okuhlolwa", pct:51, struggling:17},
+  ]},
+  "Ibanga 10B": {grade:10, total:30, topics:[
+    {topic:"Ukuvumelana Kwebizo Nesenzo", skillLabel:"Ukwakheka Kolimi", pct:79, struggling:6},
+    {topic:"Umsebenzi Nezinsizakusebenza", skillLabel:"Amagama", pct:85, struggling:4},
+    {topic:"Ukuhlaziya Isikhangiso", skillLabel:"Ukuqonda Okufundiwe", pct:61, struggling:12},
+    {topic:"Incwadi Esemthethweni — Isikhalazo", skillLabel:"Ukubhala", pct:58, struggling:13},
+    {topic:"Ukuqonda Amamaki", skillLabel:"Amasu Okuhlolwa", pct:72, struggling:8},
+  ]},
+  "Ibanga 11A": {grade:11, total:28, topics:[
+    {topic:"Inkulumo Eqondile Nengaqondile", skillLabel:"Ukwakheka Kolimi", pct:66, struggling:9},
+    {topic:"Izisho", skillLabel:"Amagama", pct:91, struggling:2},
+    {topic:"Ukuhlaziya Inkondlo — Isihloko Nomoya", skillLabel:"Ukuqonda Okufundiwe", pct:48, struggling:15},
+    {topic:"Isihloko Sombono", skillLabel:"Ukubhala", pct:70, struggling:8},
+    {topic:"Ukuhlela Impendulo Ende", skillLabel:"Amasu Okuhlolwa", pct:63, struggling:10},
+  ]},
+};
+
+const classRow = document.getElementById('classRow');
+const classDashboard = document.getElementById('classDashboard');
+const perfTable = document.getElementById('perfTable');
+const interventionPanel = document.getElementById('interventionPanel');
+let currentClass = null;
+
+function renderClassRow(){
+  classRow.innerHTML = '';
+  Object.keys(TEACHER_DATA).forEach(className=>{
+    const pill = document.createElement('div');
+    pill.className = 'grade-pill';
+    pill.textContent = className;
+    pill.addEventListener('click', ()=>{
+      classRow.querySelectorAll('.grade-pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      currentClass = className;
+      interventionPanel.classList.add('hidden');
+      renderPerfTable();
+      classDashboard.classList.remove('hidden');
+    });
+    classRow.appendChild(pill);
+  });
+}
+
+function renderPerfTable(){
+  const cls = TEACHER_DATA[currentClass];
+  const sorted = [...cls.topics].sort((a,b)=>a.pct - b.pct);
+  perfTable.innerHTML = '';
+  sorted.forEach(t=>{
+    const color = t.pct >= 70 ? 'var(--green)' : (t.pct >= 50 ? 'var(--gold)' : 'var(--coral)');
+    const row = document.createElement('div');
+    row.className = 'perf-row';
+    row.innerHTML = `
+      <div>
+        <div class="topic-name">${t.pct < 60 ? '⚠️ ' : ''}${t.topic}</div>
+        <div class="topic-skill">${t.skillLabel}</div>
+      </div>
+      <div class="pct-badge" style="color:${color};">${t.pct}%</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${t.pct}%;background:${color};"></div></div>
+    `;
+    row.addEventListener('click', ()=>{
+      perfTable.querySelectorAll('.perf-row').forEach(r=>r.classList.remove('selected'));
+      row.classList.add('selected');
+      renderIntervention(t, cls.total);
+    });
+    perfTable.appendChild(row);
+  });
+}
+
+function renderIntervention(topic, totalLearners){
+  interventionPanel.classList.remove('hidden');
+  interventionPanel.innerHTML = `
+    <h3>Isindiso Elincomekayo</h3>
+    <div class="stat-line">⚠️ ${topic.struggling} kwa-${totalLearners} babafundi basokola no-"${topic.topic}" (${topic.pct}% isilinganiso sekilasi)</div>
+    <div class="rec-box">
+      Kunconywa: Nikeza isifundo sokubuyekeza + uvivinyo olufushane mayelana no-<strong>${topic.topic}</strong> (${topic.skillLabel}) kule kilasi ngaphambi kwesifundo esilandelayo.
+    </div>
+    <button class="assign-btn" id="assignBtn">Nikeza ikilasi</button>
+  `;
+  document.getElementById('assignBtn').addEventListener('click', function(){
+    this.textContent = '✅ Kunikeziwe ekilasini';
+    this.classList.add('done');
+    this.disabled = true;
+  });
+  interventionPanel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+const skillSection = document.getElementById('skillSection');
+const skillTabs = document.getElementById('skillTabs');
+const topicList = document.getElementById('topicList');
+const quizSection = document.getElementById('quizSection');
+const diagnosticIntro = document.getElementById('diagnosticIntro');
+const diagnosticQuiz = document.getElementById('diagnosticQuiz');
+const diagnosticResults = document.getElementById('diagnosticResults');
+
+document.getElementById('skipDiagBtn').addEventListener('click', goToSkills);
+document.getElementById('startDiagBtn').addEventListener('click', startDiagnostic);
+
+let diagQuestions = [];
+let diagIndex = 0;
+let diagAnswered = [];
+let diagSkillScore = {};
+let diagSkillTotal = {};
+
+function startDiagnostic(){
+  diagnosticIntro.classList.add('hidden');
+  diagQuestions = [];
+  const gradeData = DATA[currentGrade] || {};
+  SKILLS.forEach(skill=>{
+    const topics = gradeData[skill.id] || [];
+    topics.forEach(t=>{
+      t.questions.forEach(question=>{
+        diagQuestions.push({...question, skillId: skill.id, skillLabel: skill.label});
+      });
+    });
+  });
+  // shuffle
+  for(let i=diagQuestions.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [diagQuestions[i],diagQuestions[j]] = [diagQuestions[j],diagQuestions[i]];
+  }
+  diagIndex = 0;
+  diagAnswered = new Array(diagQuestions.length).fill(false);
+  diagSkillScore = {}; diagSkillTotal = {};
+  SKILLS.forEach(s=>{ diagSkillScore[s.id]=0; diagSkillTotal[s.id]=0; });
+  diagnosticQuiz.classList.remove('hidden');
+  renderDiagQuestion();
+  diagnosticQuiz.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderDiagQuestion(){
+  if(diagIndex >= diagQuestions.length){
+    finishDiagnostic();
+    return;
+  }
+  const item = diagQuestions[diagIndex];
+  const pct = Math.round((diagIndex/diagQuestions.length)*100);
+  diagnosticQuiz.innerHTML = `
+    <div class="diag-progress"><div class="diag-progress-bar" style="width:${pct}%"></div></div>
+    <div class="meta">Uvivinyo lokuhlola · ${item.skillLabel} · Umbuzo ${diagIndex+1} kwa-${diagQuestions.length}</div>
+    <div class="q-text-row"><button class="q-speak-btn" id="diagSpeakBtn" title="Lalela">🔊</button><div class="q-text">${item.text}</div></div>
+    <div class="opts" id="diagOptsBox"></div>
+    <div class="feedback" id="diagFeedbackBox"></div>
+    <div class="q-nav">
+      <span class="q-count"></span>
+      <button class="nav-btn" id="diagNextBtn" disabled>Okulandelayo &rarr;</button>
+    </div>
+  `;
+  document.getElementById('diagSpeakBtn').addEventListener('click', ()=> playZuluText(item.text));
+  const optsBox = document.getElementById('diagOptsBox');
+  item.opts.forEach((opt,i)=>{
+    const el = document.createElement('div');
+    el.className = 'opt';
+    el.textContent = opt;
+    el.addEventListener('click', ()=>{
+      if(diagAnswered[diagIndex]) return;
+      diagAnswered[diagIndex] = true;
+      const isCorrect = i === item.correctIndex;
+      diagSkillTotal[item.skillId]++;
+      if(isCorrect){ el.classList.add('correct'); diagSkillScore[item.skillId]++; }
+      else{
+        el.classList.add('wrong');
+        optsBox.children[item.correctIndex].classList.add('correct');
+      }
+      const fb = document.getElementById('diagFeedbackBox');
+      fb.textContent = (isCorrect ? '✅ Kulungile! ' : '❌ Akusilo iqiniso ngokugcwele. ') + item.explain;
+      fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'no');
+      document.getElementById('diagNextBtn').disabled = false;
+    });
+    optsBox.appendChild(el);
+  });
+  document.getElementById('diagNextBtn').addEventListener('click', ()=>{
+    diagIndex++;
+    renderDiagQuestion();
+  });
+}
+
+function finishDiagnostic(){
+  diagnosticQuiz.classList.add('hidden');
+  const skillPercents = SKILLS.map(s=>{
+    const total = diagSkillTotal[s.id] || 0;
+    const pct = total > 0 ? Math.round((diagSkillScore[s.id]/total)*100) : null;
+    return {...s, pct, total};
+  }).filter(s => s.pct !== null);
+
+  const sorted = [...skillPercents].sort((a,b)=>b.pct - a.pct);
+  const strengths = sorted.slice(0, Math.min(2, sorted.length)).filter(s=>s.pct >= 60);
+  const needsPractice = [...sorted].reverse().slice(0, Math.min(2, sorted.length)).filter(s=>s.pct < 80);
+
+  const barsHtml = skillPercents.map(s=>{
+    const color = s.pct >= 70 ? 'var(--green)' : (s.pct >= 40 ? 'var(--gold)' : 'var(--coral)');
+    return `<div class="skill-bar-row">
+      <div class="skill-bar-label">${s.icon} ${s.label}</div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${s.pct}%;background:${color};"></div></div>
+      <div class="skill-bar-pct">${s.pct}%</div>
+    </div>`;
+  }).join('');
+
+  const strengthsHtml = strengths.length
+    ? strengths.map(s=>`<span class="tag-strength">${s.label}</span>`).join(', ')
+    : 'Akukho amandla acace ngokwana usengaqala — zijwayeze kabanzi kuzo zonke izigaba.';
+  const needsHtml = needsPractice.length
+    ? needsPractice.map(s=>`<span class="tag-needs">${s.label}</span>`).join(', ')
+    : 'Wenze kahle kuzo zonke izigaba!';
+
+  diagnosticResults.innerHTML = `
+    <div class="diag-results">
+      <h3>Iphrofayela yakho yesiZulu — Ibanga ${currentGrade}</h3>
+      <p style="color:#8a8272;font-weight:600;font-size:13.5px;margin-top:0;">Kususelwa kuvivinyo lwakho lokuhlola</p>
+      ${barsHtml}
+      <div class="diag-plan">
+        <h4>Amandla</h4>
+        <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${strengthsHtml}</p>
+        <h4>Okugxilwe kukho ekuzijwayezeni</h4>
+        <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${needsHtml}</p>
+        <h4>Uhlelo Oluphakanyisiwe Lokuzijwayeza</h4>
+        <ul>
+          <li>Imizuzu engu-15, kathathu ngesonto, ugxile ezindaweni ezishiwo ngenhla</li>
+          <li>Qala ngesigaba sekhono lapho uthole khona amaphuzu amancane kunazo zonke</li>
+          <li>Phinda uvivinyo lokuhlola ngemva kwamasonto ambalwa ukubona intuthuko</li>
+        </ul>
+      </div>
+      <button class="btn-primary" id="toSkillsBtn" style="margin-top:18px;">Yiya ekuzijwayezeni &rarr;</button>
+    </div>
+  `;
+  diagnosticResults.classList.remove('hidden');
+  document.getElementById('toSkillsBtn').addEventListener('click', goToSkills);
+  diagnosticResults.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+[8,9,10,11,12].forEach(g=>{
+  const pill = document.createElement('div');
+  pill.className = 'grade-pill';
+  pill.textContent = `Graad ${g}`;
+  pill.addEventListener('click', ()=>{
+    gradeRow.querySelectorAll('.grade-pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    currentGrade = g;
+    skillSection.classList.add('hidden');
+    quizSection.classList.add('hidden');
+    diagnosticResults.classList.add('hidden');
+    diagnosticQuiz.classList.add('hidden');
+    diagnosticIntro.classList.remove('hidden');
+    diagnosticIntro.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  gradeRow.appendChild(pill);
+});
+
+function goToSkills(){
+  diagnosticIntro.classList.add('hidden');
+  diagnosticQuiz.classList.add('hidden');
+  diagnosticResults.classList.add('hidden');
+  renderSkillTabs();
+  skillSection.classList.remove('hidden');
+  skillSection.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderSkillTabs(){
+  skillTabs.innerHTML = '';
+  SKILLS.forEach(skill=>{
+    const tab = document.createElement('div');
+    tab.className = 'skill-tab';
+    tab.textContent = `${skill.icon} ${skill.label}`;
+    tab.addEventListener('click', ()=>{
+      skillTabs.querySelectorAll('.skill-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentSkill = skill.id;
+      renderTopics();
+    });
+    skillTabs.appendChild(tab);
+  });
+  skillTabs.firstChild.classList.add('active');
+  currentSkill = SKILLS[0].id;
+  renderTopics();
+}
+
+function renderTopics(){
+  topicList.innerHTML = '';
+  quizSection.classList.add('hidden');
+  const topics = (DATA[currentGrade] && DATA[currentGrade][currentSkill]) || [];
+  if(topics.length === 0){
+    topicList.innerHTML = '<p style="color:#8a8272;font-weight:600;">Okuqukethwe kwalesi sigaba kuzokwengezwa maduzane.</p>';
+    return;
+  }
+  topics.forEach(t=>{
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    card.innerHTML = `<div class="info"><h3>${t.topic}</h3><span>${t.questions.length} imibuzo</span></div><div class="term-tag">${t.term}</div>`;
+    card.addEventListener('click', ()=>{
+      currentTopic = t;
+      qIndex = 0; score = 0; answered = new Array(t.questions.length).fill(false);
+      renderQuiz();
+      quizSection.classList.remove('hidden');
+      quizSection.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    topicList.appendChild(card);
+  });
+}
+
+function renderQuiz(){
+  if(qIndex >= currentTopic.questions.length){
+    quizSection.innerHTML = `
+      <div class="score-summary">
+        <div class="big">${score} / ${currentTopic.questions.length}</div>
+        <p style="color:#8a8272;font-weight:600;">Kuqediwe: ${currentTopic.topic}</p>
+        <span class="back-link" id="backLink">&larr; Buyela ezihlokweni</span>
+      </div>`;
+    document.getElementById('backLink').addEventListener('click', renderTopics);
+    return;
+  }
+  const item = currentTopic.questions[qIndex];
+  quizSection.innerHTML = `
+    <h3>${currentTopic.topic}</h3>
+    <div class="meta">${currentTopic.term} · Umbuzo ${qIndex+1} kwa-${currentTopic.questions.length}</div>
+    <div class="q-text-row"><button class="q-speak-btn" id="topicSpeakBtn" title="Lalela">🔊</button><div class="q-text">${item.text}</div></div>
+    <div class="opts" id="optsBox"></div>
+    <div class="feedback" id="feedbackBox"></div>
+    <div class="q-nav">
+      <span class="q-count">Amaphuzu: ${score}</span>
+      <button class="nav-btn" id="nextQBtn" disabled>Okulandelayo &rarr;</button>
+    </div>
+  `;
+  document.getElementById('topicSpeakBtn').addEventListener('click', ()=> playZuluText(item.text));
+  const optsBox = document.getElementById('optsBox');
+  item.opts.forEach((opt, i)=>{
+    const el = document.createElement('div');
+    el.className = 'opt';
+    el.textContent = opt;
+    el.addEventListener('click', ()=>{
+      if(answered[qIndex]) return;
+      answered[qIndex] = true;
+      const isCorrect = i === item.correctIndex;
+      if(isCorrect){ el.classList.add('correct'); score++; }
+      else{
+        el.classList.add('wrong');
+        optsBox.children[item.correctIndex].classList.add('correct');
+      }
+      const fb = document.getElementById('feedbackBox');
+      fb.textContent = (isCorrect ? '✅ Kulungile! ' : '❌ Akusilo iqiniso ngokugcwele. ') + item.explain;
+      fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'no');
+      document.getElementById('nextQBtn').disabled = false;
+    });
+    optsBox.appendChild(el);
+  });
+  document.getElementById('nextQBtn').addEventListener('click', ()=>{
+    qIndex++;
+    renderQuiz();
+  });
+}
+</script>
+</body>
+</html>
