@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taalhuis — CAPS-aligned Afrikaans FAL</title>
+<style>
+  :root{
+    --navy:#1B2A4A;
+    --navy-light:#2E4270;
+    --gold:#D9A441;
+    --coral:#E2574C;
+    --cream:#F7F5EF;
+    --ink:#242130;
+    --green:#3F8F5C;
+    --white:#fff;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);}
+  h1,h2,h3,.display{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:800;}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 20px 60px;}
+
+  .hero{
+    background:linear-gradient(135deg,var(--navy) 0%, var(--navy-light) 100%);
+    border-radius:22px;padding:32px 26px;color:var(--white);position:relative;overflow:hidden;
+  }
+  .hero .tag{
+    display:inline-block;background:var(--gold);color:var(--navy);
+    font-weight:800;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:5px 12px;border-radius:20px;margin-bottom:12px;
+  }
+  .hero h1{font-size:36px;margin:0 0 8px;}
+  .hero p{margin:0;font-size:14.5px;opacity:0.9;max-width:560px;line-height:1.55;}
+  .hero .book{position:absolute;right:-10px;bottom:-24px;font-size:120px;opacity:0.12;}
+
+  .section-title{font-size:20px;margin:32px 0 12px;color:var(--navy);}
+
+  .grade-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .grade-pill{
+    background:var(--white);border:2px solid #e7e1d2;border-radius:12px;
+    padding:12px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;
+    color:var(--navy);cursor:pointer;transition:all .15s ease;
+  }
+  .grade-pill:hover{border-color:var(--gold);}
+  .grade-pill.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
+
+  .skill-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .skill-tab{
+    background:var(--white);border:2px solid #e7e1d2;border-radius:20px;
+    padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;color:#6b6355;
+    transition:all .15s ease;
+  }
+  .skill-tab:hover{border-color:var(--coral);}
+  .skill-tab.active{background:var(--coral);border-color:var(--coral);color:var(--white);}
+
+  .topic-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+  .topic-card{
+    background:var(--white);border-radius:14px;padding:16px 18px;
+    display:flex;justify-content:space-between;align-items:center;cursor:pointer;
+    border:2px solid transparent;transition:border-color .15s ease;
+  }
+  .topic-card:hover{border-color:var(--gold);}
+  .topic-card .info h3{margin:0 0 4px;font-size:16px;color:var(--navy);}
+  .topic-card .info span{font-size:12px;color:#8a8272;font-weight:700;}
+  .topic-card .term-tag{
+    background:#F0E9D8;color:var(--navy);font-weight:800;font-size:11px;
+    padding:4px 10px;border-radius:8px;white-space:nowrap;
+  }
+
+  .quiz-panel{background:var(--white);border-radius:18px;padding:22px;margin-top:18px;}
+  .quiz-panel h3{margin:0 0 4px;color:var(--navy);font-size:18px;}
+  .quiz-panel .meta{font-size:12px;color:#8a8272;font-weight:700;margin-bottom:16px;}
+  .q-text{font-size:16px;font-weight:700;margin-bottom:14px;color:var(--ink);}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{
+    background:var(--cream);border:2px solid #e7e1d2;border-radius:10px;
+    padding:11px 14px;cursor:pointer;font-weight:600;font-size:14.5px;
+    transition:all .12s ease;
+  }
+  .opt:hover{border-color:var(--gold);}
+  .opt.correct{background:#E8F5EC;border-color:var(--green);color:var(--green);}
+  .opt.wrong{background:#FBEAE8;border-color:var(--coral);color:var(--coral);}
+  .feedback{
+    margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13.5px;font-weight:600;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:#E8F5EC;color:var(--green);}
+  .feedback.no{background:#FBEAE8;color:var(--coral);}
+  .q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+  .nav-btn{
+    background:var(--navy);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:10px;cursor:pointer;
+  }
+  .nav-btn:disabled{opacity:0.4;cursor:default;}
+  .q-count{font-size:12.5px;font-weight:700;color:#8a8272;}
+  .score-summary{text-align:center;padding:20px;}
+  .score-summary .big{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:34px;color:var(--navy);font-weight:800;}
+  .hidden{display:none !important;}
+  footer{text-align:center;margin-top:34px;font-size:12px;color:#a89f8c;font-weight:600;}
+  .back-link{
+    display:inline-block;margin-top:14px;font-size:13px;font-weight:700;color:var(--navy);
+    cursor:pointer;text-decoration:underline;
+  }
+
+  /* diagnostic */
+  .diag-intro{
+    background:linear-gradient(135deg,#FBF6EA,#F5EAD3);border:2px dashed var(--gold);
+    border-radius:18px;padding:22px;margin-top:18px;text-align:center;
+  }
+  .diag-intro h3{margin:0 0 6px;color:var(--navy);font-size:19px;}
+  .diag-intro p{margin:0 0 16px;color:#6b6355;font-size:13.5px;font-weight:600;max-width:480px;margin-left:auto;margin-right:auto;}
+  .diag-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--coral);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:14px;padding:11px 22px;border-radius:11px;cursor:pointer;
+  }
+  .btn-secondary{
+    background:transparent;color:var(--navy);border:2px solid var(--navy);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:14px;padding:9px 20px;border-radius:11px;cursor:pointer;
+  }
+  .diag-progress{
+    height:6px;background:#eee2cd;border-radius:4px;overflow:hidden;margin-bottom:16px;
+  }
+  .diag-progress-bar{height:100%;background:var(--coral);transition:width .3s ease;}
+  .diag-results{background:var(--white);border-radius:18px;padding:24px;margin-top:18px;}
+  .diag-results h3{margin:0 0 4px;color:var(--navy);font-size:19px;}
+  .skill-bar-row{display:flex;align-items:center;gap:10px;margin:10px 0;}
+  .skill-bar-label{width:230px;font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0;}
+  .skill-bar-track{flex:1;height:14px;background:#eee2cd;border-radius:7px;overflow:hidden;}
+  .skill-bar-fill{height:100%;border-radius:7px;}
+  .skill-bar-pct{width:42px;text-align:right;font-size:12px;font-weight:800;color:#6b6355;}
+  .diag-plan{
+    background:#F7F5EF;border-radius:12px;padding:16px 18px;margin-top:18px;
+  }
+  .diag-plan h4{margin:0 0 8px;color:var(--navy);font-size:14.5px;}
+  .diag-plan ul{margin:0;padding-left:20px;}
+  .diag-plan li{font-size:13.5px;margin-bottom:5px;font-weight:600;color:#4a4436;}
+  .tag-strength{color:var(--green);font-weight:800;}
+  .tag-needs{color:var(--coral);font-weight:800;}
+
+  /* mode toggle */
+  .mode-toggle{margin-top:18px;display:flex;gap:8px;}
+  .mode-btn{
+    background:rgba(255,255,255,0.12);color:var(--white);border:2px solid rgba(255,255,255,0.25);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:700;font-size:13px;padding:8px 16px;
+    border-radius:10px;cursor:pointer;transition:all .15s ease;
+  }
+  .mode-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+
+  /* teacher dashboard */
+  .perf-table{background:var(--white);border-radius:16px;padding:10px;margin-top:6px;}
+  .perf-row{
+    display:grid;grid-template-columns:1fr 90px 130px;gap:12px;align-items:center;
+    padding:13px 14px;border-radius:10px;cursor:pointer;transition:background .15s ease;
+  }
+  .perf-row:hover{background:#F7F5EF;}
+  .perf-row.selected{background:#FDF3E9;}
+  .perf-row .topic-name{font-size:14px;font-weight:700;color:var(--ink);}
+  .perf-row .topic-skill{font-size:11.5px;color:#9a9182;font-weight:600;}
+  .perf-row .pct-badge{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-weight:800;font-size:14px;text-align:right;
+  }
+  .perf-row .bar-track{height:10px;background:#eee2cd;border-radius:6px;overflow:hidden;}
+  .perf-row .bar-fill{height:100%;border-radius:6px;}
+  .perf-row .warn{color:var(--coral);}
+  .intervention-panel{
+    background:var(--white);border-radius:18px;padding:22px;margin-top:16px;border-left:5px solid var(--coral);
+  }
+  .intervention-panel h3{margin:0 0 6px;color:var(--navy);font-size:17px;}
+  .intervention-panel .stat-line{font-size:14px;font-weight:700;color:var(--coral);margin-bottom:12px;}
+  .intervention-panel .rec-box{
+    background:#FDF3E9;border-radius:10px;padding:14px 16px;font-size:13.5px;font-weight:600;color:#4a4436;
+  }
+  .assign-btn{
+    margin-top:14px;background:var(--navy);color:var(--white);border:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:10px;cursor:pointer;
+  }
+  .assign-btn.done{background:var(--green);cursor:default;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="book">📘</div>
+    <span class="tag">CAPS-aligned · Afrikaans Eerste Addisionele Taal</span>
+    <h1>Taalhuis</h1>
+    <p>'n Volledige leer- en intervensie-platform vir Graad 8–12, georganiseer volgens die CAPS-kurrikulum: graad → vaardigheid → onderwerp — nie net grammatika nie.</p>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="learnerModeBtn">🎓 Leerder</button>
+      <button class="mode-btn" id="teacherModeBtn">🧑‍🏫 Onderwyser</button>
+    </div>
+  </div>
+
+  <div id="learnerSection">
+  <h2 class="section-title">Kies jou graad / Choose your grade</h2>
+  <div class="grade-row" id="gradeRow"></div>
+
+  <div id="diagnosticIntro" class="diag-intro hidden">
+    <h3>🎯 Kom ons vind jou Afrikaans-vlak!</h3>
+    <p>'n Kort toets van ongeveer 8 vrae oor al vyf vaardigheidsareas. Ons wys jou dan presies waar jy sterk is en waar om eerste te oefen.</p>
+    <div class="diag-btns">
+      <button class="btn-primary" id="startDiagBtn">Begin die toets</button>
+      <button class="btn-secondary" id="skipDiagBtn">Slaan oor</button>
+    </div>
+  </div>
+
+  <div id="diagnosticQuiz" class="quiz-panel hidden"></div>
+  <div id="diagnosticResults" class="hidden"></div>
+
+  <div id="skillSection" class="hidden">
+    <h2 class="section-title">Vaardigheidsarea / Skill area</h2>
+    <div class="skill-tabs" id="skillTabs"></div>
+    <div class="topic-list" id="topicList"></div>
+  </div>
+  </div>
+
+  <!-- ============ TEACHER DASHBOARD ============ -->
+  <div id="teacherSection" class="hidden">
+    <h2 class="section-title">Kies klas / Choose class</h2>
+    <div class="grade-row" id="classRow"></div>
+
+    <div id="classDashboard" class="hidden">
+      <h2 class="section-title">Onderwerp-prestasie / Topic performance</h2>
+      <div class="perf-table" id="perfTable"></div>
+
+      <div id="interventionPanel" class="intervention-panel hidden"></div>
+    </div>
+  </div>
+
+  <div id="quizSection" class="quiz-panel hidden"></div>
+
+  <footer>Taalhuis — CAPS-aligned Afrikaans FAL learning &amp; intervention platform for South African schools</footer>
+</div>
+
+<script>
+const SKILLS = [
+  {id:"struct", label:"Taalstrukture en -konvensies", icon:"🧩"},
+  {id:"vocab", label:"Woordeskat", icon:"📚"},
+  {id:"reading", label:"Leesbegrip", icon:"📖"},
+  {id:"writing", label:"Skryf en Transaksionele Tekste", icon:"✍️"},
+  {id:"exam", label:"Eksamentegniek", icon:"⏱️"},
+];
+
+function q(text, opts, correctIndex, explain){
+  return {text, opts, correctIndex, explain};
+}
+
+const DATA = {
+  8: {
+    struct: [
+      {topic:"Werkwoordstye — Teenwoordige tyd", term:"Kwartaal 1", questions:[
+        q("Sy ___ elke oggend skool toe.", ["loop","geloop","sal loop","het geloop"], 0, "Die sin beskryf 'n gereelde handeling in die hede, dus die teenwoordige tyd 'loop'."),
+        q("Ons ___ Afrikaans op skool.", ["leer","geleer","sal leer","het geleer"], 0, "'Leer' is korrek omdat dit 'n huidige, herhalende aksie beskryf."),
+      ]},
+      {topic:"Meervoude (Enkelvoud → Meervoud)", term:"Kwartaal 2", questions:[
+        q("Wat is die meervoud van 'boek'?", ["boeke","boekies","boek se","boeken"], 0, "Die meeste selfstandige naamwoorde vorm die meervoud deur '-e' by te voeg: boek → boeke."),
+        q("Wat is die meervoud van 'kind'?", ["kinders","kinde","kinds","kindere"], 0, "'Kind' het 'n onreëlmatige meervoud: kinders."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Skool en Omgewing", term:"Kwartaal 1", questions:[
+        q("Wat beteken 'klaskamer' in Engels?", ["classroom","playground","library","office"], 0, "'Klaskamer' = classroom, waar leerders lesse ontvang."),
+        q("Wat beteken 'onderwyser'?", ["teacher","student","principal","cleaner"], 0, "'Onderwyser' beteken teacher."),
+      ]},
+      {topic:"Liggaamsdele en Gesondheid", term:"Kwartaal 2", questions:[
+        q("Wat beteken 'hoofpyn'?", ["headache","stomach ache","backache","toothache"], 0, "'Hoofpyn' beteken headache — pyn in die kop."),
+        q("Wat beteken 'siek'?", ["sick","healthy","strong","tired"], 0, "'Siek' beteken sick/ill."),
+      ]},
+    ],
+    reading: [
+      {topic:"Kort paragraaf: 'n Dag by die skool", term:"Kwartaal 1", questions:[
+        q("Wat is die hoofdoel van 'n opsomming?", ["Om die hooffeite kort weer te gee","Om die teks te herskryf woord vir woord","Om jou eie mening te gee","Om nuwe inligting by te voeg"], 0, "'n Opsomming gee net die hooffeite kortliks weer, sonder onnodige detail."),
+      ]},
+      {topic:"Instruksies volg", term:"Kwartaal 2", questions:[
+        q("Waarom is dit belangrik om instruksies noukeurig te lees?", ["Sodat jy die taak korrek en in die regte volgorde voltooi","Sodat jy vinniger kan skryf","Sodat jy die instruksies kan ignoreer","Dit maak nie regtig saak nie"], 0, "Instruksies noukeurig lees verseker dat jy elke stap korrek en in die regte volgorde uitvoer."),
+      ]},
+    ],
+    writing: [
+      {topic:"Informele brief — Formaat", term:"Kwartaal 2", questions:[
+        q("Watter groet pas by 'n informele brief?", ["Liewe/Hallo [naam]","Geagte Meneer/Mevrou","Aan wie dit mag aangaan","Beste kliënt"], 0, "Informele briewe gebruik 'n vriendelike, persoonlike groet soos 'Liewe' of 'Hallo'."),
+      ]},
+      {topic:"Uitnodiging skryf", term:"Kwartaal 3", questions:[
+        q("Watter inligting moet 'n uitnodiging altyd bevat?", ["Datum, tyd en plek van die geleentheid","Net die naam van die gasheer","'n Lang storie oor die geleentheid","Niks spesifieks nie"], 0, "'n Uitnodiging moet duidelik wees oor wanneer en waar die geleentheid plaasvind."),
+      ]},
+    ],
+    exam: [
+      {topic:"Tydsbestuur in die eksamen", term:"Kwartaal 4", questions:[
+        q("Wat is die beste eerste stap in 'n taaleksamen?", ["Lees al die vrae eers deur","Begin dadelik skryf sonder om te lees","Slaan die moeilikste afdeling oor","Skryf net die laaste vraag eerste"], 0, "Deur eers al die vrae deur te lees, kan jy jou tyd beter beplan."),
+      ]},
+      {topic:"Vraagwoorde herken", term:"Kwartaal 1", questions:[
+        q("Watter vraagwoord vra vir 'n rede?", ["Hoekom","Wie","Waar","Wanneer"], 0, "'Hoekom' vra spesifiek vir 'n rede of verklaring."),
+      ]},
+    ],
+  },
+  9: {
+    struct: [
+      {topic:"Verlede tyd", term:"Kwartaal 1", questions:[
+        q("Gister ___ ons na die fliek.", ["het gegaan","gaan","sal gaan","gaan gegaan"], 0, "'Het gegaan' is die korrekte verledetydvorm."),
+        q("Sy ___ die boek klaar gelees.", ["het","is","sal","word"], 0, "'Het' + verlede deelwoord vorm die volmaakte verlede tyd."),
+      ]},
+      {topic:"Toekomende tyd", term:"Kwartaal 2", questions:[
+        q("Môre ___ ons na die museum toe.", ["sal gaan","het gegaan","gaan","is gegaan"], 0, "'Sal gaan' dui 'n handeling in die toekoms aan."),
+        q("Ek ___ jou more bel.", ["sal","het","is","word"], 0, "'Sal' + werkwoord vorm die toekomende tyd."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Familie en Verhoudings", term:"Kwartaal 1", questions:[
+        q("Wat beteken 'neef'?", ["cousin (male)","sister","aunt","grandfather"], 0, "'Neef' beteken 'n manlike neef (cousin)."),
+      ]},
+      {topic:"Kos en Etes", term:"Kwartaal 2", questions:[
+        q("Wat beteken 'ontbyt'?", ["breakfast","lunch","dinner","snack"], 0, "'Ontbyt' beteken breakfast — die eerste maaltyd van die dag."),
+        q("Wat beteken 'lekker'?", ["nice/tasty","bad","boring","expensive"], 0, "'Lekker' beteken nice of tasty, en word wyd gebruik in Afrikaans."),
+      ]},
+    ],
+    reading: [
+      {topic:"Koerantberig — Feite vs Mening", term:"Kwartaal 2", questions:[
+        q("Watter een is 'n feit, nie 'n mening nie?", ["Die skool het 500 leerders.","Die skool is die beste in die dorp.","Afrikaans is 'n maklike vak.","Almal geniet Wiskunde."], 0, "'n Feit kan bewys word; 'n mening is subjektief."),
+      ]},
+      {topic:"Kortverhaal-begrip", term:"Kwartaal 3", questions:[
+        q("Wat is die 'intrige' (plot) van 'n verhaal?", ["Die volgorde van gebeure in die storie","Die naam van die skrywer","Die titel van die boek","Die plek waar dit gepubliseer is"], 0, "Die intrige verwys na hoe die gebeure in die verhaal ontvou."),
+      ]},
+    ],
+    writing: [
+      {topic:"Dagboekinskrywing", term:"Kwartaal 2", questions:[
+        q("'n Dagboekinskrywing word gewoonlik in watter persoon geskryf?", ["Eerste persoon (ek)","Tweede persoon (jy)","Derde persoon (hy/sy)","Onpersoonlike vorm"], 0, "Dagboekinskrywings is persoonlik en word in die eerste persoon geskryf."),
+      ]},
+      {topic:"SMS/WhatsApp-boodskap", term:"Kwartaal 3", questions:[
+        q("Watter toon pas gewoonlik by 'n informele SMS aan 'n vriend?", ["Kort, informeel en vriendelik","Lank en baie formeel","Streng en amptelik","Sonder enige groet"], 0, "SMS-boodskappe aan vriende is gewoonlik kort en informeel."),
+      ]},
+    ],
+    exam: [
+      {topic:"Sleutelwoorde in vrae herken", term:"Kwartaal 3", questions:[
+        q("Wat vra 'n vraag met 'verduidelik'?", ["'n Volledige rede/verklaring","Net 'ja' of 'nee'","'n Lys sonder detail","'n Tekening"], 0, "'Verduidelik' vra vir 'n volledige, verduidelikende antwoord, nie net 'n kort feit nie."),
+      ]},
+      {topic:"Voorbeeld-eksamenvrae ontleed", term:"Kwartaal 4", questions:[
+        q("Waarom is dit nuttig om ou eksamenvraestelle te oefen?", ["Dit wys watter tipe vrae en formaat om te verwag","Dit is 'n vermorsing van tyd","Dit vervang die leerplan heeltemal","Dit is net vir onderwysers nuttig"], 0, "Ou vraestelle wys die tipe vrae, formaat en moeilikheidsgraad wat leerders kan verwag."),
+      ]},
+    ],
+  },
+  10: {
+    struct: [
+      {topic:"Voegwoorde en Sinskonstruksie", term:"Kwartaal 1", questions:[
+        q("Ek wou gaan, ___ dit het gereën.", ["maar","en","of","want"], 0, "'Maar' dui 'n teenstelling aan tussen die twee sinsdele."),
+        q("Kies die korrekte samestelling: Sy is moeg ___ sy min geslaap het.", ["omdat","maar","en","of"], 0, "'Omdat' verduidelik die rede vir haar moegheid."),
+      ]},
+      {topic:"Aktief en Passief", term:"Kwartaal 2", questions:[
+        q("Kies die passiewe vorm: 'Die hond byt die kat.'", ["Die kat word deur die hond gebyt.","Die hond het die kat gebyt.","Die kat byt die hond.","Die hond sal die kat byt."], 0, "In die passiewe vorm word die voorwerp die onderwerp van die sin: 'word ... gebyt'."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Werk en Loopbane", term:"Kwartaal 1", questions:[
+        q("Wat beteken 'ondernemer'?", ["entrepreneur","employee","manager only","student"], 0, "'Ondernemer' beteken entrepreneur — iemand wat 'n eie besigheid begin."),
+      ]},
+      {topic:"Reis en Toerisme", term:"Kwartaal 2", questions:[
+        q("Wat beteken 'paspoort'?", ["passport","ticket","suitcase","map"], 0, "'Paspoort' beteken passport, benodig vir internasionale reise."),
+        q("Wat beteken 'bestemming'?", ["destination","departure","airport","luggage"], 0, "'Bestemming' beteken destination — waar jy heen reis."),
+      ]},
+    ],
+    reading: [
+      {topic:"Visuele teks — Advertensies ontleed", term:"Kwartaal 2", questions:[
+        q("Wat is die doel van 'n slagspreuk (slogan) in 'n advertensie?", ["Om maklik onthou te word en die produk te bevorder","Om al die tegniese besonderhede te gee","Om die prys te wys","Om die maatskappy se geskiedenis te vertel"], 0, "'n Slagspreuk is kort en onthoubaar, ontwerp om die produk te bevorder."),
+      ]},
+      {topic:"Onderhoud-transkripsie begrip", term:"Kwartaal 3", questions:[
+        q("Wat moet jy soek wanneer jy 'n onderhoud lees vir begrip?", ["Die hoofpunte en standpunt van die persoon wat ondervra word","Net die naam van die onderhoudvoerder","Die lengte van die onderhoud","Die lettertipe wat gebruik is"], 0, "By 'n onderhoud fokus jy op wat die persoon werklik sê en hul standpunt, nie op oppervlakkige besonderhede nie."),
+      ]},
+    ],
+    writing: [
+      {topic:"Formele brief — Klagbrief", term:"Kwartaal 3", questions:[
+        q("Watter toon pas by 'n formele klagbrief?", ["Beleefd en saaklik","Informeel en grappig","Kwaad en aggressief","Kortaf sonder detail"], 0, "'n Formele klagbrief moet beleefd en saaklik bly, selfs al is die skrywer ontevrede."),
+      ]},
+      {topic:"Uitnodiging — Transaksionele teks", term:"Kwartaal 3", questions:[
+        q("'n Formele uitnodiging vereis watter styl?", ["Netjies, duidelik en amptelik","Los en informeel","Vol grappe","Sonder enige struktuur"], 0, "'n Formele uitnodiging moet netjies en amptelik wees, met al die nodige besonderhede."),
+      ]},
+    ],
+    exam: [
+      {topic:"Punte-toekenning verstaan", term:"Kwartaal 4", questions:[
+        q("As 'n vraag 5 punte werd is, wat beteken dit gewoonlik?", ["Jy moet ongeveer 5 aparte punte/idees noem","Net een woord is genoeg","Skryf net 'n opskrif","Dit maak nie saak hoeveel jy skryf nie"], 0, "Die punte-toekenning wys gewoonlik hoeveel aparte idees of stappe verwag word."),
+      ]},
+      {topic:"Aanhalings en verwysing in essays", term:"Kwartaal 2", questions:[
+        q("Waarom gebruik 'n mens aanhalingstekens in 'n opstel?", ["Om iemand anders se presiese woorde aan te dui","Om die opstel langer te maak","Om spelfoute te wys","Dit het geen doel nie"], 0, "Aanhalingstekens wys wanneer jy iemand anders se presiese woorde direk aanhaal."),
+      ]},
+    ],
+  },
+  11: {
+    struct: [
+      {topic:"Direkte en Indirekte Rede", term:"Kwartaal 1", questions:[
+        q("Sy sê: 'Ek is moeg.' → Indirekte rede:", ["Sy het gesê sy is moeg.","Sy sê ek is moeg.","Sy het gesê ek is moeg.","Sy sê sy was moeg."], 0, "In indirekte rede verander die perspektief van 'ek' na 'sy', en die werkwoordstyd skuif."),
+      ]},
+      {topic:"Bywoorde en Voorsetsels", term:"Kwartaal 3", questions:[
+        q("Kies die korrekte voorsetsel: Sy woon ___ Kaapstad.", ["in","op","by","na"], 0, "'In' word gebruik om te sê waar iemand woon binne 'n stad of plek."),
+        q("Watter woord is 'n bywoord in: 'Hy loop vinnig.'?", ["vinnig","hy","loop","."], 0, "'Vinnig' beskryf hóé hy loop, dus is dit 'n bywoord."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Idiome en Segswyses", term:"Kwartaal 2", questions:[
+        q("Wat beteken 'die kat uit die sak laat'?", ["'n Geheim onbedoeld verklap","Om 'n kat te koop","Om vinnig te hardloop","Om kwaad te word"], 0, "Hierdie idioom beteken om 'n geheim per ongeluk te onthul."),
+      ]},
+      {topic:"Omgewing en Volhoubaarheid", term:"Kwartaal 3", questions:[
+        q("Wat beteken 'volhoubaar'?", ["sustainable","expensive","temporary","dangerous"], 0, "'Volhoubaar' beteken sustainable — iets wat oor die lang termyn kan voortduur."),
+      ]},
+    ],
+    reading: [
+      {topic:"Gedig-analise — Tema en Toon", term:"Kwartaal 2", questions:[
+        q("Wat word bedoel met die 'toon' van 'n gedig?", ["Die gevoel/houding wat die digter oordra","Die aantal reëls in die gedig","Die titel van die gedig","Die digter se ouderdom"], 0, "Toon verwys na die emosionele houding wat deur woordkeuse en styl oorgedra word."),
+      ]},
+      {topic:"Kortverhaal — Simboliek", term:"Kwartaal 3", questions:[
+        q("Wat is 'simboliek' in 'n verhaal?", ["Wanneer iets vir 'n dieper betekenis staan","Die lengte van die verhaal","Die naam van die hoofkarakter","Die plek waar die storie afspeel"], 0, "Simboliek is wanneer 'n voorwerp, kleur of gebeurtenis 'n dieper betekenis dra as die letterlike."),
+      ]},
+    ],
+    writing: [
+      {topic:"Uitleg — Meningsartikel", term:"Kwartaal 3", questions:[
+        q("Wat moet 'n goeie meningsartikel bevat?", ["'n Duidelike standpunt met redes","Net feite sonder mening","Net vrae sonder antwoorde","'n Storie sonder standpunt"], 0, "'n Meningsartikel moet 'n duidelike standpunt stel en dit met redes ondersteun."),
+      ]},
+      {topic:"Verslag skryf", term:"Kwartaal 4", questions:[
+        q("Watter struktuur volg 'n formele verslag gewoonlik?", ["Inleiding, bevindinge, aanbevelings","Net 'n lang paragraaf sonder opskrifte","'n Gedig-formaat","'n Dialoog tussen twee mense"], 0, "'n Formele verslag volg gewoonlik 'n duidelike struktuur met inleiding, bevindinge en aanbevelings."),
+      ]},
+    ],
+    exam: [
+      {topic:"Langvraag-strukturering", term:"Kwartaal 4", questions:[
+        q("Wat is 'n goeie eerste stap by 'n lang opstel-vraag?", ["Maak 'n kort skets/plan voor jy skryf","Skryf dadelik sonder beplanning","Los die vraag eerste","Kopieer 'n vorige antwoord"], 0, "'n Kort plan help om jou gedagtes te organiseer voor jy begin skryf."),
+      ]},
+      {topic:"Tydsverdeling oor lang vrae", term:"Kwartaal 1", questions:[
+        q("Hoe moet jy jou tyd verdeel in 'n eksamen met verskillende afdelings?", ["Volgens die punte wat elke afdeling werd is","Ewe veel tyd aan elke vraag, ongeag punte","Net aan die maklikste vrae","Dit maak nie saak nie"], 0, "Deur tyd volgens punte te verdeel, verseker jy dat jy nie te veel tyd aan lae-punt-vrae mors nie."),
+      ]},
+    ],
+  },
+  12: {
+    struct: [
+      {topic:"Voornaamwoorde en Verwysing (Hersiening)", term:"Kwartaal 1", questions:[
+        q("Kies die korrekte voornaamwoord: ___ het die huiswerk klaar gedoen.", ["Hulle","Hom","Haar","Hulle se"], 0, "'Hulle' is die korrekte onderwerpsvorm van die voornaamwoord."),
+      ]},
+      {topic:"Sinsontleding (Hersiening)", term:"Kwartaal 2", questions:[
+        q("Wat is die onderwerp in: 'Die leerders skryf die toets.'?", ["Die leerders","skryf","die toets","."], 0, "Die onderwerp is wie of wat die handeling uitvoer — 'die leerders'."),
+      ]},
+    ],
+    vocab: [
+      {topic:"Akademiese en Formele Woordeskat", term:"Kwartaal 1", questions:[
+        q("Wat beteken 'aanhaling'?", ["quotation","question","answer","introduction"], 0, "'Aanhaling' beteken 'n quotation — woorde direk uit 'n bron aangehaal."),
+      ]},
+      {topic:"Retoriese Taalgebruik", term:"Kwartaal 2", questions:[
+        q("Wat is 'n 'retoriese vraag'?", ["'n Vraag wat nie regtig 'n antwoord verwag nie, maar 'n punt maak","'n Vraag met net een korrekte antwoord","'n Vraag wat altyd 'ja' as antwoord het","'n Vraag sonder betekenis"], 0, "'n Retoriese vraag word gevra om 'n punt te beklemtoon, nie om werklik 'n antwoord te kry nie."),
+      ]},
+    ],
+    reading: [
+      {topic:"Roman/Drama — Karakteranalise", term:"Kwartaal 2", questions:[
+        q("Wat is 'karakterontwikkeling'?", ["Hoe 'n karakter verander regdeur die verhaal","Die karakter se naam","Die aantal karakters in die boek","Die skrywer se biografie"], 0, "Karakterontwikkeling beskryf hoe 'n karakter groei of verander oor die verloop van die verhaal."),
+      ]},
+      {topic:"Drama — Konflik en Tema", term:"Kwartaal 3", questions:[
+        q("Wat is die 'tema' van 'n drama?", ["Die sentrale boodskap of idee van die werk","Die naam van die akteur","Die plek waar dit opgevoer word","Die lengte van die drama"], 0, "Die tema is die onderliggende boodskap of idee wat die skrywer deur die werk oordra."),
+      ]},
+    ],
+    writing: [
+      {topic:"Eksamenopstel — Argumenterend", term:"Kwartaal 3", questions:[
+        q("Wat is die doel van 'n argumenterende opstel?", ["Om 'n standpunt met bewyse te oortuig","Om net 'n storie te vertel","Om net feite te lys sonder standpunt","Om 'n gedig te skryf"], 0, "'n Argumenterende opstel probeer die leser oortuig deur logiese redes en bewyse."),
+      ]},
+      {topic:"Formele verslag/voorlegging", term:"Kwartaal 3", questions:[
+        q("Wat maak 'n voorlegging/verslag 'formeel'?", ["Duidelike struktuur, saaklike toon en korrekte taalgebruik","Baie emoji's en informele taal","Geen opskrifte of struktuur nie","Net persoonlike meninge sonder bewyse"], 0, "'n Formele verslag het 'n duidelike struktuur, saaklike toon en korrekte, formele taalgebruik."),
+      ]},
+    ],
+    exam: [
+      {topic:"Finale Eksamenvoorbereiding", term:"Kwartaal 4", questions:[
+        q("Wat word aanbeveel in die laaste week voor die eksamen?", ["Hersien kernbegrippe en doen oefenvrae","Leer heeltemal nuwe werk vir die eerste keer","Moenie enigsins hersien nie","Fokus net op een afdeling"], 0, "In die laaste week is dit beter om te hersien en te oefen eerder as om nuwe inhoud te leer."),
+      ]},
+      {topic:"Matriek-eksamenstrategie", term:"Kwartaal 4", questions:[
+        q("Watter strategie word aanbeveel wanneer jy op 'n moeilike vraag vassit?", ["Los dit tydelik en gaan aan na die volgende vraag","Bly daarop vasgevang totdat die tyd verby is","Gee dadelik op","Skryf enigiets sonder om te dink"], 0, "Deur 'n moeilike vraag tydelik te los, verseker jy dat jy nie kosbare tyd op ander vrae verloor nie."),
+      ]},
+    ],
+  }
+};
+
+let currentGrade = null;
+let currentSkill = null;
+let currentTopic = null;
+let qIndex = 0;
+let score = 0;
+let answered = [];
+
+const learnerSection = document.getElementById('learnerSection');
+const teacherSection = document.getElementById('teacherSection');
+const learnerModeBtn = document.getElementById('learnerModeBtn');
+const teacherModeBtn = document.getElementById('teacherModeBtn');
+const gradeRow = document.getElementById('gradeRow');
+
+learnerModeBtn.addEventListener('click', ()=>{
+  learnerModeBtn.classList.add('active');
+  teacherModeBtn.classList.remove('active');
+  learnerSection.classList.remove('hidden');
+  teacherSection.classList.add('hidden');
+  quizSection.classList.add('hidden');
+});
+teacherModeBtn.addEventListener('click', ()=>{
+  teacherModeBtn.classList.add('active');
+  learnerModeBtn.classList.remove('active');
+  teacherSection.classList.remove('hidden');
+  learnerSection.classList.add('hidden');
+  quizSection.classList.add('hidden');
+  renderClassRow();
+});
+
+/* ---------------- Teacher dashboard mock data ---------------- */
+const TEACHER_DATA = {
+  "Graad 9A": {grade:9, total:34, topics:[
+    {topic:"Verlede tyd", skillLabel:"Taalstrukture en -konvensies", pct:82, struggling:6},
+    {topic:"Familie en Verhoudings", skillLabel:"Woordeskat", pct:88, struggling:4},
+    {topic:"Koerantberig — Feite vs Mening", skillLabel:"Leesbegrip", pct:74, struggling:9},
+    {topic:"Dagboekinskrywing", skillLabel:"Skryf en Transaksionele Tekste", pct:69, struggling:11},
+    {topic:"Sleutelwoorde in vrae herken", skillLabel:"Eksamentegniek", pct:51, struggling:17},
+  ]},
+  "Graad 10B": {grade:10, total:30, topics:[
+    {topic:"Voegwoorde en Sinskonstruksie", skillLabel:"Taalstrukture en -konvensies", pct:79, struggling:6},
+    {topic:"Werk en Loopbane", skillLabel:"Woordeskat", pct:85, struggling:4},
+    {topic:"Visuele teks — Advertensies ontleed", skillLabel:"Leesbegrip", pct:61, struggling:12},
+    {topic:"Formele brief — Klagbrief", skillLabel:"Skryf en Transaksionele Tekste", pct:58, struggling:13},
+    {topic:"Punte-toekenning verstaan", skillLabel:"Eksamentegniek", pct:72, struggling:8},
+  ]},
+  "Graad 11A": {grade:11, total:28, topics:[
+    {topic:"Direkte en Indirekte Rede", skillLabel:"Taalstrukture en -konvensies", pct:66, struggling:9},
+    {topic:"Idiome en Segswyses", skillLabel:"Woordeskat", pct:91, struggling:2},
+    {topic:"Gedig-analise — Tema en Toon", skillLabel:"Leesbegrip", pct:48, struggling:15},
+    {topic:"Uitleg — Meningsartikel", skillLabel:"Skryf en Transaksionele Tekste", pct:70, struggling:8},
+    {topic:"Langvraag-strukturering", skillLabel:"Eksamentegniek", pct:63, struggling:10},
+  ]},
+};
+
+const classRow = document.getElementById('classRow');
+const classDashboard = document.getElementById('classDashboard');
+const perfTable = document.getElementById('perfTable');
+const interventionPanel = document.getElementById('interventionPanel');
+let currentClass = null;
+
+function renderClassRow(){
+  classRow.innerHTML = '';
+  Object.keys(TEACHER_DATA).forEach(className=>{
+    const pill = document.createElement('div');
+    pill.className = 'grade-pill';
+    pill.textContent = className;
+    pill.addEventListener('click', ()=>{
+      classRow.querySelectorAll('.grade-pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      currentClass = className;
+      interventionPanel.classList.add('hidden');
+      renderPerfTable();
+      classDashboard.classList.remove('hidden');
+    });
+    classRow.appendChild(pill);
+  });
+}
+
+function renderPerfTable(){
+  const cls = TEACHER_DATA[currentClass];
+  const sorted = [...cls.topics].sort((a,b)=>a.pct - b.pct);
+  perfTable.innerHTML = '';
+  sorted.forEach(t=>{
+    const color = t.pct >= 70 ? 'var(--green)' : (t.pct >= 50 ? 'var(--gold)' : 'var(--coral)');
+    const row = document.createElement('div');
+    row.className = 'perf-row';
+    row.innerHTML = `
+      <div>
+        <div class="topic-name">${t.pct < 60 ? '⚠️ ' : ''}${t.topic}</div>
+        <div class="topic-skill">${t.skillLabel}</div>
+      </div>
+      <div class="pct-badge" style="color:${color};">${t.pct}%</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${t.pct}%;background:${color};"></div></div>
+    `;
+    row.addEventListener('click', ()=>{
+      perfTable.querySelectorAll('.perf-row').forEach(r=>r.classList.remove('selected'));
+      row.classList.add('selected');
+      renderIntervention(t, cls.total);
+    });
+    perfTable.appendChild(row);
+  });
+}
+
+function renderIntervention(topic, totalLearners){
+  interventionPanel.classList.remove('hidden');
+  interventionPanel.innerHTML = `
+    <h3>Aanbevole Intervensie</h3>
+    <div class="stat-line">⚠️ ${topic.struggling} van ${totalLearners} leerders sukkel met "${topic.topic}" (${topic.pct}% klasgemiddeld)</div>
+    <div class="rec-box">
+      Aanbeveel: Ken 'n hersieningsles + kort toets oor <strong>${topic.topic}</strong> (${topic.skillLabel}) toe aan hierdie klas voor die volgende les.
+    </div>
+    <button class="assign-btn" id="assignBtn">Ken toe aan klas</button>
+  `;
+  document.getElementById('assignBtn').addEventListener('click', function(){
+    this.textContent = '✅ Toegeken aan klas';
+    this.classList.add('done');
+    this.disabled = true;
+  });
+  interventionPanel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+const skillSection = document.getElementById('skillSection');
+const skillTabs = document.getElementById('skillTabs');
+const topicList = document.getElementById('topicList');
+const quizSection = document.getElementById('quizSection');
+const diagnosticIntro = document.getElementById('diagnosticIntro');
+const diagnosticQuiz = document.getElementById('diagnosticQuiz');
+const diagnosticResults = document.getElementById('diagnosticResults');
+
+document.getElementById('skipDiagBtn').addEventListener('click', goToSkills);
+document.getElementById('startDiagBtn').addEventListener('click', startDiagnostic);
+
+let diagQuestions = [];
+let diagIndex = 0;
+let diagAnswered = [];
+let diagSkillScore = {};
+let diagSkillTotal = {};
+
+function startDiagnostic(){
+  diagnosticIntro.classList.add('hidden');
+  diagQuestions = [];
+  const gradeData = DATA[currentGrade] || {};
+  SKILLS.forEach(skill=>{
+    const topics = gradeData[skill.id] || [];
+    topics.forEach(t=>{
+      t.questions.forEach(question=>{
+        diagQuestions.push({...question, skillId: skill.id, skillLabel: skill.label});
+      });
+    });
+  });
+  // shuffle
+  for(let i=diagQuestions.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [diagQuestions[i],diagQuestions[j]] = [diagQuestions[j],diagQuestions[i]];
+  }
+  diagIndex = 0;
+  diagAnswered = new Array(diagQuestions.length).fill(false);
+  diagSkillScore = {}; diagSkillTotal = {};
+  SKILLS.forEach(s=>{ diagSkillScore[s.id]=0; diagSkillTotal[s.id]=0; });
+  diagnosticQuiz.classList.remove('hidden');
+  renderDiagQuestion();
+  diagnosticQuiz.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderDiagQuestion(){
+  if(diagIndex >= diagQuestions.length){
+    finishDiagnostic();
+    return;
+  }
+  const item = diagQuestions[diagIndex];
+  const pct = Math.round((diagIndex/diagQuestions.length)*100);
+  diagnosticQuiz.innerHTML = `
+    <div class="diag-progress"><div class="diag-progress-bar" style="width:${pct}%"></div></div>
+    <div class="meta">Diagnostiese toets · ${item.skillLabel} · Vraag ${diagIndex+1} van ${diagQuestions.length}</div>
+    <div class="q-text">${item.text}</div>
+    <div class="opts" id="diagOptsBox"></div>
+    <div class="feedback" id="diagFeedbackBox"></div>
+    <div class="q-nav">
+      <span class="q-count"></span>
+      <button class="nav-btn" id="diagNextBtn" disabled>Volgende &rarr;</button>
+    </div>
+  `;
+  const optsBox = document.getElementById('diagOptsBox');
+  item.opts.forEach((opt,i)=>{
+    const el = document.createElement('div');
+    el.className = 'opt';
+    el.textContent = opt;
+    el.addEventListener('click', ()=>{
+      if(diagAnswered[diagIndex]) return;
+      diagAnswered[diagIndex] = true;
+      const isCorrect = i === item.correctIndex;
+      diagSkillTotal[item.skillId]++;
+      if(isCorrect){ el.classList.add('correct'); diagSkillScore[item.skillId]++; }
+      else{
+        el.classList.add('wrong');
+        optsBox.children[item.correctIndex].classList.add('correct');
+      }
+      const fb = document.getElementById('diagFeedbackBox');
+      fb.textContent = (isCorrect ? '✅ Reg! ' : '❌ Nie heeltemal nie. ') + item.explain;
+      fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'no');
+      document.getElementById('diagNextBtn').disabled = false;
+    });
+    optsBox.appendChild(el);
+  });
+  document.getElementById('diagNextBtn').addEventListener('click', ()=>{
+    diagIndex++;
+    renderDiagQuestion();
+  });
+}
+
+function finishDiagnostic(){
+  diagnosticQuiz.classList.add('hidden');
+  const skillPercents = SKILLS.map(s=>{
+    const total = diagSkillTotal[s.id] || 0;
+    const pct = total > 0 ? Math.round((diagSkillScore[s.id]/total)*100) : null;
+    return {...s, pct, total};
+  }).filter(s => s.pct !== null);
+
+  const sorted = [...skillPercents].sort((a,b)=>b.pct - a.pct);
+  const strengths = sorted.slice(0, Math.min(2, sorted.length)).filter(s=>s.pct >= 60);
+  const needsPractice = [...sorted].reverse().slice(0, Math.min(2, sorted.length)).filter(s=>s.pct < 80);
+
+  const barsHtml = skillPercents.map(s=>{
+    const color = s.pct >= 70 ? 'var(--green)' : (s.pct >= 40 ? 'var(--gold)' : 'var(--coral)');
+    return `<div class="skill-bar-row">
+      <div class="skill-bar-label">${s.icon} ${s.label}</div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${s.pct}%;background:${color};"></div></div>
+      <div class="skill-bar-pct">${s.pct}%</div>
+    </div>`;
+  }).join('');
+
+  const strengthsHtml = strengths.length
+    ? strengths.map(s=>`<span class="tag-strength">${s.label}</span>`).join(', ')
+    : 'Nog geen duidelike sterkpunt nie — oefen breed oor alle areas.';
+  const needsHtml = needsPractice.length
+    ? needsPractice.map(s=>`<span class="tag-needs">${s.label}</span>`).join(', ')
+    : 'Goed gedoen oor die board!';
+
+  diagnosticResults.innerHTML = `
+    <div class="diag-results">
+      <h3>Jou Afrikaans-profiel — Graad ${currentGrade}</h3>
+      <p style="color:#8a8272;font-weight:600;font-size:13.5px;margin-top:0;">Gebaseer op jou diagnostiese toets</p>
+      ${barsHtml}
+      <div class="diag-plan">
+        <h4>Sterkpunte</h4>
+        <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${strengthsHtml}</p>
+        <h4>Fokus vir oefening</h4>
+        <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${needsHtml}</p>
+        <h4>Voorgestelde oefenplan</h4>
+        <ul>
+          <li>15 minute, 3 keer per week, met fokus op die areas hierbo genoem</li>
+          <li>Begin met die vaardigheidsarea waar jy die laagste getel het</li>
+          <li>Herhaal die diagnostiese toets oor 'n paar weke om vordering te sien</li>
+        </ul>
+      </div>
+      <button class="btn-primary" id="toSkillsBtn" style="margin-top:18px;">Gaan na oefeninge &rarr;</button>
+    </div>
+  `;
+  diagnosticResults.classList.remove('hidden');
+  document.getElementById('toSkillsBtn').addEventListener('click', goToSkills);
+  diagnosticResults.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+[8,9,10,11,12].forEach(g=>{
+  const pill = document.createElement('div');
+  pill.className = 'grade-pill';
+  pill.textContent = `Graad ${g}`;
+  pill.addEventListener('click', ()=>{
+    gradeRow.querySelectorAll('.grade-pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    currentGrade = g;
+    skillSection.classList.add('hidden');
+    quizSection.classList.add('hidden');
+    diagnosticResults.classList.add('hidden');
+    diagnosticQuiz.classList.add('hidden');
+    diagnosticIntro.classList.remove('hidden');
+    diagnosticIntro.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  gradeRow.appendChild(pill);
+});
+
+function goToSkills(){
+  diagnosticIntro.classList.add('hidden');
+  diagnosticQuiz.classList.add('hidden');
+  diagnosticResults.classList.add('hidden');
+  renderSkillTabs();
+  skillSection.classList.remove('hidden');
+  skillSection.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderSkillTabs(){
+  skillTabs.innerHTML = '';
+  SKILLS.forEach(skill=>{
+    const tab = document.createElement('div');
+    tab.className = 'skill-tab';
+    tab.textContent = `${skill.icon} ${skill.label}`;
+    tab.addEventListener('click', ()=>{
+      skillTabs.querySelectorAll('.skill-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentSkill = skill.id;
+      renderTopics();
+    });
+    skillTabs.appendChild(tab);
+  });
+  skillTabs.firstChild.classList.add('active');
+  currentSkill = SKILLS[0].id;
+  renderTopics();
+}
+
+function renderTopics(){
+  topicList.innerHTML = '';
+  quizSection.classList.add('hidden');
+  const topics = (DATA[currentGrade] && DATA[currentGrade][currentSkill]) || [];
+  if(topics.length === 0){
+    topicList.innerHTML = '<p style="color:#8a8272;font-weight:600;">Inhoud vir hierdie area word binnekort bygevoeg.</p>';
+    return;
+  }
+  topics.forEach(t=>{
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    card.innerHTML = `<div class="info"><h3>${t.topic}</h3><span>${t.questions.length} vrae</span></div><div class="term-tag">${t.term}</div>`;
+    card.addEventListener('click', ()=>{
+      currentTopic = t;
+      qIndex = 0; score = 0; answered = new Array(t.questions.length).fill(false);
+      renderQuiz();
+      quizSection.classList.remove('hidden');
+      quizSection.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    topicList.appendChild(card);
+  });
+}
+
+function renderQuiz(){
+  if(qIndex >= currentTopic.questions.length){
+    quizSection.innerHTML = `
+      <div class="score-summary">
+        <div class="big">${score} / ${currentTopic.questions.length}</div>
+        <p style="color:#8a8272;font-weight:600;">Voltooi: ${currentTopic.topic}</p>
+        <span class="back-link" id="backLink">&larr; Terug na onderwerpe</span>
+      </div>`;
+    document.getElementById('backLink').addEventListener('click', renderTopics);
+    return;
+  }
+  const item = currentTopic.questions[qIndex];
+  quizSection.innerHTML = `
+    <h3>${currentTopic.topic}</h3>
+    <div class="meta">${currentTopic.term} · Vraag ${qIndex+1} van ${currentTopic.questions.length}</div>
+    <div class="q-text">${item.text}</div>
+    <div class="opts" id="optsBox"></div>
+    <div class="feedback" id="feedbackBox"></div>
+    <div class="q-nav">
+      <span class="q-count">Telling: ${score}</span>
+      <button class="nav-btn" id="nextQBtn" disabled>Volgende &rarr;</button>
+    </div>
+  `;
+  const optsBox = document.getElementById('optsBox');
+  item.opts.forEach((opt, i)=>{
+    const el = document.createElement('div');
+    el.className = 'opt';
+    el.textContent = opt;
+    el.addEventListener('click', ()=>{
+      if(answered[qIndex]) return;
+      answered[qIndex] = true;
+      const isCorrect = i === item.correctIndex;
+      if(isCorrect){ el.classList.add('correct'); score++; }
+      else{
+        el.classList.add('wrong');
+        optsBox.children[item.correctIndex].classList.add('correct');
+      }
+      const fb = document.getElementById('feedbackBox');
+      fb.textContent = (isCorrect ? '✅ Reg! ' : '❌ Nie heeltemal nie. ') + item.explain;
+      fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'no');
+      document.getElementById('nextQBtn').disabled = false;
+    });
+    optsBox.appendChild(el);
+  });
+  document.getElementById('nextQBtn').addEventListener('click', ()=>{
+    qIndex++;
+    renderQuiz();
+  });
+}
+</script>
+</body>
+</html>
