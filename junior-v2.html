@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taalhuis Junior V2</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f6f7fb;color:#172033}
+.wrap{max-width:720px;margin:auto;padding:18px}
+header{background:#172033;color:white;border-radius:20px;padding:24px;margin-bottom:16px}
+h1,h2,h3{margin-top:0}
+.card{background:white;border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px #00000010}
+button{width:100%;border:0;border-radius:13px;padding:14px;margin:7px 0;font-size:16px;font-weight:700;background:#172033;color:white}
+button.alt{background:#e9edf5;color:#172033}
+button.good{background:#287a4b;color:white}
+button.warn{background:#a96a00;color:white}
+.small{font-size:14px;color:#647084}
+.hidden{display:none}
+.progress{height:10px;background:#e4e8f0;border-radius:99px;overflow:hidden;margin:12px 0}
+.bar{height:100%;width:0;background:#172033}
+.option{background:#f1f3f8;color:#172033;text-align:left}
+.score{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.badge{display:inline-block;padding:5px 9px;border-radius:99px;background:#eef2ff;font-size:13px}
+.feedback{padding:14px;border-radius:14px;background:#f1f3f8;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">TAALHUIS V2 • JUNIOR AFRIKAANS</div>
+  <h1>Learn. Practise. Improve.</h1>
+  <p>Diagnoseer → leer → oefen → verbeter.</p>
+</header>
+
+<section id="welcome" class="card">
+  <h2>Kom ons vind uit wat jy weet.</h2>
+  <p>Hierdie kort diagnose help Taalhuis om jou sterk en swak areas te vind.</p>
+  <button onclick="startDiagnostic()">Begin diagnose</button>
+</section>
+
+<section id="diagnostic" class="card hidden">
+  <p class="small" id="dcount"></p>
+  <div class="progress"><div id="dbar" class="bar"></div></div>
+  <h2 id="dq"></h2>
+  <div id="dopts"></div>
+  <div id="dfeedback"></div>
+</section>
+
+<section id="diagnosis" class="card hidden">
+  <h2>Jou Taalhuis-diagnose</h2>
+  <div id="scores"></div>
+  <div class="feedback">
+    <strong>Ons fokusarea:</strong>
+    <p id="focusText"></p>
+  </div>
+  <button onclick="startFocus()">Begin my fokusles</button>
+</section>
+
+<section id="coach" class="card hidden">
+  <span class="badge">VRAAGWOORD-COACH</span>
+  <h2>Verstaan eers die vraag.</h2>
+  <p><strong>Waarom het Mia vroeg huis toe gegaan?</strong></p>
+  <p>Die woord <strong>Waarom?</strong> vra vir 'n <strong>rede</strong>.</p>
+  <button class="alt" onclick="showHint()">💡 Gee my 'n wenk</button>
+  <div id="hint" class="feedback hidden">
+    Soek in die leesstuk vir die rede waarom Mia vroeg huis toe gegaan het.
+  </div>
+  <p class="small">Vraagwoord → Wat vra dit? → Waar is die antwoord? → Bou jou antwoord.</p>
+  <button onclick="startComprehension()">Gaan voort</button>
+</section>
+
+<section id="comprehension" class="card hidden">
+  <span class="badge">BEGRIPSOEFENING</span>
+  <h2>Lees die kort teks.</h2>
+  <p>Mia het ná skool begin reën. Sy het haar boeke in haar tas gesit en vinnig huis toe gegaan omdat sy nie nat wou word nie.</p>
+  <h3>Waarom het Mia vroeg huis toe gegaan?</h3>
+  <button class="option" onclick="answerComp(false)">Omdat sy honger was.</button>
+  <button class="option" onclick="answerComp(true)">Omdat sy nie nat wou word nie.</button>
+  <button class="option" onclick="answerComp(false)">Omdat sy haar vriend wou sien.</button>
+  <div id="cfeedback"></div>
+</section>
+
+<section id="practice" class="card hidden">
+  <span class="badge">ADAPTIEWE OEFENING</span>
+  <h2>Nou oefen ons jou fokusarea.</h2>
+  <p id="practiceQ"></p>
+  <div id="practiceOpts"></div>
+  <div id="pfeedback"></div>
+</section>
+
+<section id="progress" class="card hidden">
+  <h2>Jy het verbeter!</h2>
+  <div id="beforeAfter"></div>
+  <div class="feedback">
+    <strong>Volgende stap:</strong>
+    <p>Hou aan oefen totdat hierdie vaardigheid sterk en konsekwent is.</p>
+  </div>
+  <button onclick="location.reload()">Doen weer</button>
+</section>
+</div>
+
+<script>
+const qs=[
+ {skill:"vocab",q:"Wat beteken 'groot'?",o:["big","small","fast"],a:0},
+ {skill:"question",q:"Watter vraagwoord vra vir 'n rede?",o:["Wie?","Waarom?","Waar?"],a:1},
+ {skill:"grammar",q:"Kies die werkwoord: 'Lebo lees 'n boek.'",o:["Lebo","lees","boek"],a:1},
+ {skill:"comprehension",q:"As 'n vraag vra 'Waar?', waarna soek jy?",o:["'n persoon","'n plek","'n rede"],a:1},
+ {skill:"structure",q:"In 'Sara eet 'n appel', wat is die voorwerp?",o:["Sara","eet","'n appel"],a:2},
+ {skill:"question",q:"Watter vraagwoord vra vir 'n persoon?",o:["Wie?","Wanneer?","Hoe?"],a:0}
+];
+
+let di=0,results=[],focusSkill="",practiceCorrect=false;
+
+function show(id){
+ document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ window.scrollTo(0,0);
+}
+function startDiagnostic(){di=0;results=[];show("diagnostic");renderD();}
+function renderD(){
+ const q=qs[di];
+ document.getElementById("dcount").textContent=`Vraag ${di+1} van ${qs.length}`;
+ document.getElementById("dbar").style.width=((di/qs.length)*100)+"%";
+ document.getElementById("dq").textContent=q.q;
+ document.getElementById("dfeedback").innerHTML="";
+ document.getElementById("dopts").innerHTML=q.o.map((x,i)=>`<button class="option" onclick="pickD(${i})">${x}</button>`).join("");
+}
+function pickD(i){
+ const q=qs[di];
+ results.push({skill:q.skill,correct:i===q.a});
+ document.getElementById("dfeedback").innerHTML=`<div class="feedback">${i===q.a?"✓ Goed!":"Nog nie — dis okay. Taalhuis gebruik dit om te weet wat om volgende te leer."}</div>`;
+ setTimeout(()=>{di++; if(di<qs.length) renderD(); else finishD();},450);
+}
+function finishD(){
+ const scores={vocab:0,question:0,grammar:0,comprehension:0,structure:0};
+ const totals={vocab:0,question:0,grammar:0,comprehension:0,structure:0};
+ results.forEach(r=>{totals[r.skill]++;if(r.correct)scores[r.skill]++});
+ const pct={};
+ Object.keys(scores).forEach(k=>pct[k]=Math.round(scores[k]/totals[k]*100));
+ focusSkill=Object.keys(pct).sort((a,b)=>pct[a]-pct[b])[0];
+ window._pct=pct;
+ const names={vocab:"Woordeskat",question:"Vraagwoorde",grammar:"Grammatika",comprehension:"Begrip",structure:"Sinstruktuur"};
+ document.getElementById("scores").innerHTML=Object.entries(pct).map(([k,v])=>`<div class="score"><span>${names[k]}</span><strong>${v}%</strong></div>`).join("");
+ document.getElementById("focusText").textContent=names[focusSkill]+" — ons gaan hierdie vaardigheid eerste versterk.";
+ show("diagnosis");
+}
+function startFocus(){
+ if(focusSkill==="question"){show("coach");return;}
+ startComprehension();
+}
+function showHint(){document.getElementById("hint").classList.remove("hidden")}
+function startComprehension(){show("comprehension")}
+function answerComp(ok){
+ document.getElementById("cfeedback").innerHTML=`<div class="feedback">${ok?"✓ Reg! Jy het die rede uit die teks gevind.":"Kyk weer na die woord 'Waarom?'. Dit vra vir 'n rede."}</div>`;
+ if(ok)setTimeout(startPractice,500);
+}
+function startPractice(){
+ show("practice");
+ document.getElementById("practiceQ").textContent="Watter vraagwoord vra vir 'n plek?";
+ document.getElementById("practiceOpts").innerHTML=["Wie?","Waar?","Waarom?"].map((x,i)=>`<button class="option" onclick="finishPractice(${i===1})">${x}</button>`).join("");
+}
+function finishPractice(ok){
+ practiceCorrect=ok;
+ document.getElementById("pfeedback").innerHTML=`<div class="feedback">${ok?"✓ Sterk! Jy verstaan nou die vraagwoord.":"Byna. Onthou: 'Waar?' vra vir 'n plek."}</div>`;
+ setTimeout(showProgress,500);
+}
+function showProgress(){
+ show("progress");
+ const before=(window._pct&&window._pct[focusSkill]!=null)?window._pct[focusSkill]:0;
+ const after=Math.min(100,before+(practiceCorrect?15:5));
+ document.getElementById("beforeAfter").innerHTML=`
+ <div class="score"><span>Voor fokusles</span><strong>${before}%</strong></div>
+ <div class="score"><span>Na oefening</span><strong>${after}%</strong></div>
+ <p class="small">Hierdie is 'n leerprogressie-aanwyser vir die sessie — nie 'n finale akademiese punt nie.</p>`;
+}
+</script>
+</body>
+</html>
