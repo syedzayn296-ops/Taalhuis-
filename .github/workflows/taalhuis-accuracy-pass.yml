@@ -1,0 +1,127 @@
+name: Taalhuis accuracy pass
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply targeted accuracy and teacher-value fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('taalhuis.html')
+          text = path.read_text(encoding='utf-8')
+
+          # --- Grade 8 tense accuracy pass ---
+          pattern = re.compile(r'(  8: \{\n    struct: \[).*?(\n    \],\n    vocab:)', re.S)
+          replacement = r'''\1
+      {topic:"Werkwoordstye — Teenwoordige tyd", term:"Kwartaal 1", questions:[
+        q("Sy ___ elke oggend skool toe.", ["loop","geloop","sal loop","het geloop"], 0, "Die sin beskryf 'n gereelde handeling in die hede: 'loop'."),
+        q("Ons ___ Afrikaans op skool.", ["leer","geleer","sal leer","het geleer"], 0, "'Leer' is die korrekte teenwoordige tyd vir 'n huidige of gereelde handeling."),
+      ]},
+      {topic:"Werkwoordstye — Verlede tyd", term:"Kwartaal 1", questions:[
+        q("Kies die korrekte sin: gister / ek / my huiswerk / doen.", ["Gister het ek my huiswerk gedoen.","Gister ek het my huiswerk gedoen.","Gister het my huiswerk ek gedoen.","Gister ek my huiswerk het gedoen."], 0, "In 'n gewone stelsin staan die werkwoord vroeg in die sin; met 'gister' vooraan volg 'het' vóór die onderwerp, en 'gedoen' kom aan die einde."),
+        q("Kies die korrekte sin: Die leerders / speel / gister / buite.", ["Die leerders het gister buite gespeel.","Die leerders gister het buite gespeel.","Die leerders het buite gister gespeel.","Die leerders het gister gespeel buite."], 0, "In die verlede tyd gebruik ons 'het' en die verlede deelwoord 'gespeel'; die sin behou 'n natuurlike Afrikaanse woordorde."),
+        q("Vul in: Gister ___ ons die toets ___.", ["het / geskryf","geskryf / het","sal / geskryf","het / skryf"], 0, "Die verlede tyd gebruik 'het' saam met die verlede deelwoord: 'het ... geskryf'."),
+      ]},
+      {topic:"Werkwoordstye — Toekomende tyd", term:"Kwartaal 2", questions:[
+        q("Kies die korrekte sin: môre / ons / die toets / skryf.", ["Môre sal ons die toets skryf.","Môre ons sal die toets skryf.","Môre sal die toets ons skryf.","Môre ons die toets sal skryf."], 0, "Met 'môre' vooraan volg 'sal' vóór die onderwerp; die hoofwerkwoord 'skryf' kom aan die einde."),
+        q("Vul in: Sy ___ volgende week die projek ___.", ["sal / voltooi","het / voltooi","sal / voltooiing","voltooi / sal"], 0, "Die toekomende tyd gebruik 'sal' + die hoofwerkwoord: 'sal ... voltooi'."),
+      ]},
+'''
+          new_text, count = pattern.subn(replacement + r'\2', text, count=1)
+          if count != 1:
+              raise SystemExit('Grade 8 struct block was not found exactly once')
+          text = new_text
+
+          # --- Teacher value: transparent class snapshot + copyable report ---
+          marker = '      <div class="perf-table" id="perfTable"></div>\n'
+          insert = marker + '''      <div id="teacherReport" class="diag-results hidden"></div>\n'''
+          if 'id="teacherReport"' not in text:
+              if marker not in text:
+                  raise SystemExit('Teacher performance marker not found')
+              text = text.replace(marker, insert, 1)
+
+          old_click = '''      renderPerfTable();\n      classDashboard.classList.remove('hidden');'''
+          new_click = '''      renderPerfTable();\n      renderTeacherReport();\n      classDashboard.classList.remove('hidden');'''
+          if old_click in text and 'renderTeacherReport();' not in text[text.find('function renderClassRow'):text.find('function renderIntervention')]:
+              text = text.replace(old_click, new_click, 1)
+
+          report_fn = r'''
+function renderTeacherReport(){
+  const report = document.getElementById('teacherReport');
+  const cls = TEACHER_DATA[currentClass];
+  if(!report || !cls) return;
+  const average = Math.round(cls.topics.reduce((sum,t)=>sum+t.pct,0)/cls.topics.length);
+  const strengths = [...cls.topics].sort((a,b)=>b.pct-a.pct).slice(0,2);
+  const focus = [...cls.topics].sort((a,b)=>a.pct-b.pct).slice(0,2);
+  const focusLines = focus.map(t=>`• ${t.topic}: ${t.struggling} van ${cls.total} leerders onder die klasgemiddeld (${t.pct}%).`).join('<br>');
+  const reportText = [
+    `Taalhuis klasverslag — ${currentClass}`,
+    `Leerders: ${cls.total}`,
+    `Klasgemiddeld oor gemonitorde onderwerpe: ${average}%`,
+    `Sterkpunte: ${strengths.map(t=>`${t.topic} (${t.pct}%)`).join('; ')}`,
+    `Fokus: ${focus.map(t=>`${t.topic} (${t.pct}%)`).join('; ')}`,
+    `Intervensie: Hersien die twee fokusonderwerpe met kort, geteikende oefening en hersien die resultate daarna.`
+  ].join('\\n');
+
+  report.innerHTML = `
+    <h3>🧑‍🏫 Onderwyser se vinnige klasverslag</h3>
+    <p style="color:#8a8272;font-weight:600;font-size:13px;margin-top:0;">Demo-klasdata in hierdie prototipe — nie lewendige leerderdata nie.</p>
+    <div class="diag-plan">
+      <h4>Klasopsomming</h4>
+      <p style="font-size:13.5px;font-weight:700;margin:0 0 10px;">${cls.total} leerders · ${average}% gemiddelde prestasie</p>
+      <h4>Sterkpunte</h4>
+      <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${strengths.map(t=>`<span class="tag-strength">${t.topic} (${t.pct}%)</span>`).join(', ')}</p>
+      <h4>Eerste fokus</h4>
+      <p style="font-size:13.5px;font-weight:600;margin:0 0 12px;">${focusLines}</p>
+      <div class="rec-box"><strong>Onderwysaksie:</strong> Herbesoek die laagste onderwerp met 'n kort hersieningsles en mini-toets. Gebruik die onderwerp se bestaande intervensie-knoppie hieronder vir opvolg.</div>
+    </div>
+    <button class="assign-btn" id="copyReportBtn">📋 Kopieer klasverslag</button>
+  `;
+  report.classList.remove('hidden');
+  const btn = document.getElementById('copyReportBtn');
+  btn.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(reportText);
+      btn.textContent = '✅ Verslag gekopieer';
+      btn.classList.add('done');
+    }catch(err){
+      btn.textContent = 'Kopiëring nie beskikbaar nie';
+    }
+  });
+}
+'''
+          if 'function renderTeacherReport(){' not in text:
+              anchor = '\nfunction renderIntervention(topic, totalLearners){'
+              if anchor not in text:
+                  raise SystemExit('Teacher intervention anchor not found')
+              text = text.replace(anchor, '\n' + report_fn + anchor, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patched page and remove one-time workflow
+        run: |
+          if git diff --quiet -- taalhuis.html; then
+            echo "No changes were necessary."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add taalhuis.html .github/workflows/taalhuis-accuracy-pass.yml
+          git commit -m "fix: correct Grade 8 tense order and add teacher report"
+          git rm .github/workflows/taalhuis-accuracy-pass.yml
+          git commit -m "chore: remove one-time accuracy workflow"
+          git push
