@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taalhuis — Graad 8 Tydsvorme Akkuraatheidskontrole</title>
+<style>
+:root{--navy:#1B2A4A;--navy2:#2E4270;--gold:#D9A441;--coral:#E2574C;--cream:#F7F5EF;--ink:#242130;--green:#3F8F5C;--white:#fff;--muted:#7d7464}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:20px 16px 50px}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:var(--white);border-radius:20px;padding:26px 22px}.tag{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;font-size:11px;padding:5px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}.hero h1{margin:11px 0 7px;font-size:30px}.hero p{margin:0;opacity:.92;line-height:1.5;font-size:14px}.nav{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:var(--white);text-decoration:none;padding:8px 13px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer}.nav a:hover,.nav button:hover{background:rgba(255,255,255,.16)}
+.panel{background:var(--white);border-radius:16px;padding:20px;margin-top:16px}.panel h2{margin:0 0 8px;color:var(--navy);font-size:19px}.panel p{margin:0 0 14px;line-height:1.5}.mode{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.mode button,.primary,.secondary{border:none;border-radius:10px;padding:10px 15px;font-weight:800;cursor:pointer;font-size:13.5px}.mode button{background:#eee7d9;color:var(--navy)}.mode button.active,.primary{background:var(--coral);color:var(--white)}.secondary{background:transparent;border:2px solid var(--navy);color:var(--navy)}.hidden{display:none!important}
+.instructions{background:#fbf6ea;border:2px dashed var(--gold);padding:14px 16px;border-radius:12px;font-size:13px;font-weight:600;color:#554d40}.qmeta{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:9px}.qtext{font-size:18px;font-weight:800;line-height:1.45;margin-bottom:14px}.opts{display:flex;flex-direction:column;gap:9px}.opt{background:var(--cream);border:2px solid #e4ddcf;border-radius:10px;padding:12px 14px;cursor:pointer;font-weight:700}.opt:hover{border-color:var(--gold)}.opt.correct{background:#e8f5ec;border-color:var(--green);color:var(--green)}.opt.wrong{background:#fbeae8;border-color:var(--coral);color:var(--coral)}.feedback{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:13.5px;font-weight:600;display:none}.feedback.show{display:block}.ok{background:#e8f5ec;color:var(--green)}.no{background:#fbeae8;color:var(--coral)}.bar{height:7px;background:#eee2cd;border-radius:10px;overflow:hidden;margin:0 0 14px}.fill{height:100%;background:var(--coral);width:0}.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}.count{font-size:12px;font-weight:800;color:var(--muted)}
+.score{text-align:center}.score .big{font-size:40px;font-weight:900;color:var(--navy)}.score .label{font-size:14px;font-weight:700;color:var(--muted)}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.result-card{background:#f7f5ef;border-radius:12px;padding:13px}.result-card strong{display:block;color:var(--navy);font-size:12px}.result-card span{display:block;margin-top:4px;font-weight:900;font-size:20px}.teacher-note{background:#f7f5ef;border-radius:12px;padding:14px 16px;margin-top:12px;font-size:13px;font-weight:600}.report{background:#fff;border:2px solid #e7e1d2;border-radius:12px;padding:14px;white-space:pre-wrap;line-height:1.5;font-size:13px;margin-top:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}footer{text-align:center;color:#9b9283;font-size:12px;margin-top:26px}
+@media(max-width:620px){.hero h1{font-size:25px}.qtext{font-size:16px}.result-grid{grid-template-columns:1fr}.wrap{padding:12px 12px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <span class="tag">Graad 8 · Afrikaans FAL</span>
+    <h1>Tydsvorme &amp; Woordorde — Akkuraatheidskontrole</h1>
+    <p>'n Gefokusde mini-toets om te kyk of die verlede en toekomende tyd in natuurlike Afrikaanse woordorde gebruik word.</p>
+    <div class="nav">
+      <a href="taalhuis.html">← Terug na Taalhuis</a>
+      <button id="teacherModeBtn" type="button">🧑‍🏫 Onderwyser</button>
+    </div>
+  </section>
+
+  <section id="startPanel" class="panel">
+    <h2>Leerderkontrole</h2>
+    <p>Kies 'n fokus. Jy kry onmiddellike terugvoer en 'n kort verslag aan die einde.</p>
+    <div class="instructions"><strong>Wenk:</strong> Let op waar <em>het</em> of <em>sal</em> staan. In die voorbeelde met <em>gister</em> of <em>môre</em> vooraan moet die res van die sin steeds natuurlik lees.</div>
+    <div class="mode">
+      <button class="active" data-set="mixed">Gemengde toets</button>
+      <button data-set="past">Verlede tyd</button>
+      <button data-set="future">Toekomende tyd</button>
+    </div>
+    <div class="actions"><button class="primary" id="startBtn">Begin kontrole →</button></div>
+  </section>
+
+  <section id="quizPanel" class="panel hidden">
+    <div class="bar"><div id="progressFill" class="fill"></div></div>
+    <div id="quizBody"></div>
+  </section>
+
+  <section id="resultsPanel" class="panel hidden"></section>
+
+  <section id="teacherPanel" class="panel hidden">
+    <h2>Onderwyser se vinnige gebruik</h2>
+    <p>Hierdie module is ontwerp as 'n kort klasdiagnose. Dit gebruik die prototipe se eie resultate in die huidige blaaier; dit is nie 'n gekoppelde skooldatabasis nie.</p>
+    <div class="teacher-note"><strong>Voorstel:</strong> Laat leerders die gemengde toets individueel voltooi. Gebruik daarna die foutpatroon — veral <em>het + verlede deelwoord</em> en <em>sal + hoofwerkwoord</em> — as 'n kort herhalingspunt.</div>
+    <div id="savedResult" class="report">Geen vorige resultaat op hierdie toestel nie.</div>
+    <div class="actions"><button class="secondary" id="clearSaved">Maak gestoorde resultaat skoon</button></div>
+  </section>
+
+  <footer>Taalhuis · Graad 8 Akkuraatheidskontrole</footer>
+</div>
+<script>
+const BANK={
+ past:[
+  {t:"Kies die korrekte sin: gister / ek / my huiswerk / doen.",o:["Gister het ek my huiswerk gedoen.","Gister ek het my huiswerk gedoen.","Gister het my huiswerk ek gedoen.","Gister ek my huiswerk het gedoen."],c:0,e:"Met 'gister' vooraan volg 'het' vóór die onderwerp, en die verlede deelwoord 'gedoen' kom aan die einde."},
+  {t:"Kies die korrekte sin: Die leerders / speel / gister / buite.",o:["Die leerders het gister buite gespeel.","Die leerders gister het buite gespeel.","Die leerders het buite gister gespeel.","Die leerders het gister gespeel buite."],c:0,e:"'Het ... gespeel' is die korrekte verlede tyd-vorm, met 'gister' op 'n natuurlike plek in die sin."},
+  {t:"Vul in: Gister ___ ons die toets ___. ",o:["het / geskryf","geskryf / het","sal / geskryf","het / skryf"],c:0,e:"Die verlede tyd gebruik 'het' saam met die verlede deelwoord: 'het ... geskryf'."},
+  {t:"Kies die korrekte sin.",o:["Ek het gister vroeg opgestaan.","Ek gister het vroeg opgestaan.","Ek het vroeg opgestaan gister.","Ek gister vroeg het opgestaan."],c:0,e:"Die gewone volgorde is 'Ek het ... opgestaan', met 'gister' op 'n natuurlike plek tussenin."}
+ ],
+ future:[
+  {t:"Kies die korrekte sin: môre / ons / die toets / skryf.",o:["Môre sal ons die toets skryf.","Môre ons sal die toets skryf.","Môre sal die toets ons skryf.","Môre ons die toets sal skryf."],c:0,e:"Met 'môre' vooraan volg 'sal' vóór die onderwerp; die hoofwerkwoord 'skryf' kom aan die einde."},
+  {t:"Vul in: Sy ___ volgende week die projek ___.",o:["sal / voltooi","het / voltooi","sal / voltooiing","voltooi / sal"],c:0,e:"Die toekomende tyd gebruik 'sal' + die hoofwerkwoord: 'sal ... voltooi'."},
+  {t:"Kies die korrekte sin.",o:["Ons sal môre die wedstryd speel.","Ons môre sal die wedstryd speel.","Ons sal die wedstryd môre speel.","Ons môre die wedstryd sal speel."],c:0,e:"'Ons sal ... speel' gee die korrekte toekomende tyd. 'Môre' kan ook later in die sin voorkom."},
+  {t:"Kies die korrekte sin: volgende jaar / my broer / skool / klaar maak.",o:["Volgende jaar sal my broer skool klaarmaak.","Volgende jaar my broer sal skool klaarmaak.","Volgende jaar sal skool my broer klaarmaak.","Volgende jaar my broer skool sal klaarmaak."],c:0,e:"Wanneer 'volgende jaar' vooraan staan, bly 'sal' voor die onderwerp in hierdie soort sin."}
+ ]
+};
+
+let chosen='mixed',questions=[],idx=0,score=0,answered=false;
+const startPanel=document.getElementById('startPanel'),quizPanel=document.getElementById('quizPanel'),resultsPanel=document.getElementById('resultsPanel'),teacherPanel=document.getElementById('teacherPanel');
+
+document.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-set]').forEach(x=>x.classList.remove('active'));b.classList.add('active');chosen=b.dataset.set;
+}));
+
+document.getElementById('startBtn').addEventListener('click',()=>{
+  questions=chosen==='mixed'?[...BANK.past,...BANK.future]:[...BANK[chosen]];
+  questions=questions.map(q=>({...q}));
+  for(let i=questions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[questions[i],questions[j]]=[questions[j],questions[i]];}
+  idx=0;score=0;answered=false;resultsPanel.classList.add('hidden');teacherPanel.classList.add('hidden');quizPanel.classList.remove('hidden');renderQuestion();quizPanel.scrollIntoView({behavior:'smooth'});
+});
+
+function renderQuestion(){
+  const q=questions[idx];
+  document.getElementById('progressFill').style.width=Math.round((idx/questions.length)*100)+'%';
+  quizPanel.querySelector('#quizBody').innerHTML=`<div class="qmeta">Vraag ${idx+1} van ${questions.length} · ${chosen==='past'?'Verlede tyd':chosen==='future'?'Toekomende tyd':'Gemeng'}</div><div class="qtext">${q.t}</div><div class="opts" id="opts"></div><div class="feedback" id="fb"></div><div class="qnav"><span class="count">Telling: ${score}</span><button class="primary" id="nextBtn" disabled>Volgende →</button></div>`;
+  const opts=document.getElementById('opts');q.o.forEach((text,i)=>{const el=document.createElement('div');el.className='opt';el.textContent=text;el.addEventListener('click',()=>answer(i));opts.appendChild(el);});
+  document.getElementById('nextBtn').addEventListener('click',()=>{idx++; if(idx>=questions.length)finish(); else {answered=false;renderQuestion();}});
+}
+function answer(i){if(answered)return;answered=true;const q=questions[idx];const opts=[...document.querySelectorAll('.opt')];if(i===q.c){opts[i].classList.add('correct');score++;}else{opts[i].classList.add('wrong');opts[q.c].classList.add('correct');}const fb=document.getElementById('fb');fb.textContent=(i===q.c?'✅ Reg! ':'❌ Nie heeltemal nie. ')+q.e;fb.className='feedback show '+(i===q.c?'ok':'no');document.getElementById('nextBtn').disabled=false;}
+function finish(){quizPanel.classList.add('hidden');const pct=Math.round(score/questions.length*100);const result={mode:chosen,score,total:questions.length,pct,at:new Date().toLocaleString('af-ZA')};localStorage.setItem('taalhuis_grade8_accuracy_v1',JSON.stringify(result));resultsPanel.innerHTML=`<div class="score"><div class="big">${score} / ${questions.length}</div><div class="label">${pct}% · ${chosen==='past'?'Verlede tyd':chosen==='future'?'Toekomende tyd':'Gemengde toets'}</div></div><div class="result-grid"><div class="result-card"><strong>FOKUS</strong><span>${pct>=80?'Goeie beheer':'Nog oefening nodig'}</span></div><div class="result-card"><strong>VOLGENDE STAP</strong><span>${pct>=80?'Hou aan oefen':'Herhaal woordorde'}</span></div><div class="result-card"><strong>RESULTAAT</strong><span>${pct}%</span></div></div><div class="teacher-note"><strong>Leerderwenk:</strong> Onthou die patroon uit die oefeninge: <em>het + verlede deelwoord</em> vir die verlede tyd; <em>sal + hoofwerkwoord</em> vir die toekomende tyd.</div><div class="actions"><button class="primary" id="retryBtn">Doen weer</button><button class="secondary" id="teacherResultBtn">Wys onderwyseropsomming</button></div>`;resultsPanel.classList.remove('hidden');document.getElementById('retryBtn').addEventListener('click',()=>{resultsPanel.classList.add('hidden');startPanel.classList.remove('hidden');startPanel.scrollIntoView({behavior:'smooth'});});document.getElementById('teacherResultBtn').addEventListener('click',()=>{teacherPanel.classList.remove('hidden');renderSaved();teacherPanel.scrollIntoView({behavior:'smooth'});});}
+function renderSaved(){const box=document.getElementById('savedResult');const raw=localStorage.getItem('taalhuis_grade8_accuracy_v1');if(!raw){box.textContent='Geen vorige resultaat op hierdie toestel nie.';return;}const r=JSON.parse(raw);box.textContent=`Laaste resultaat\nModus: ${r.mode==='past'?'Verlede tyd':r.mode==='future'?'Toekomende tyd':'Gemengde toets'}\nTelling: ${r.score}/${r.total} (${r.pct}%)\nDatum: ${r.at}\n\nInterpretasie: ${r.pct>=80?'Die leerder wys goeie beheer in hierdie mini-toets.':'Die resultaat wys dat verdere woordorde- en tydsvormoefening nuttig sal wees.'}`;}
+document.getElementById('teacherModeBtn').addEventListener('click',()=>{teacherPanel.classList.toggle('hidden');renderSaved();teacherPanel.scrollIntoView({behavior:'smooth'});});
+document.getElementById('clearSaved').addEventListener('click',()=>{localStorage.removeItem('taalhuis_grade8_accuracy_v1');renderSaved();});
+</script>
+</body>
+</html>
