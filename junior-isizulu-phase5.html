@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zu">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taalhuis Junior isiZulu — Phase 5</title>
+<style>
+:root{--navy:#1B2A4A;--navy2:#2E4270;--gold:#D9A441;--coral:#E2574C;--cream:#F7F5EF;--ink:#242130;--green:#3F8F5C;--white:#fff;--muted:#7d7464}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:14px 14px 50px}.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:20px;padding:24px 20px}.tag{display:inline-block;background:var(--gold);color:var(--navy);font-weight:900;font-size:11px;padding:5px 10px;border-radius:99px;letter-spacing:.05em}.hero h1{margin:11px 0 7px;font-size:30px}.hero p{margin:0;line-height:1.5;opacity:.92;font-size:14px}.nav{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}.nav a{color:#fff;text-decoration:none;border:2px solid rgba(255,255,255,.25);padding:8px 12px;border-radius:10px;font-weight:800;font-size:13px}.panel{background:#fff;border-radius:16px;padding:18px;margin-top:16px}.panel h2{margin:0 0 8px;color:var(--navy);font-size:19px}.muted{color:var(--muted);font-size:13px;line-height:1.5;font-weight:600}.grades,.topics{display:flex;flex-wrap:wrap;gap:8px}.pill{background:#fff;border:2px solid #e7e1d2;border-radius:11px;padding:10px 14px;font-weight:800;color:var(--navy);cursor:pointer}.pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}.topics{margin-top:12px}.topic{width:100%;text-align:left;background:#fff;border:2px solid #e7e1d2;border-radius:12px;padding:14px;cursor:pointer}.topic strong{display:block;color:var(--navy);font-size:15px}.topic span{font-size:12px;color:var(--muted);font-weight:700}.hidden{display:none!important}.qmeta{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:8px}.qtext{font-size:17px;font-weight:900;line-height:1.45;margin-bottom:13px}.opts{display:flex;flex-direction:column;gap:8px}.opt{background:var(--cream);border:2px solid #e7e1d2;border-radius:10px;padding:11px 13px;font-weight:700;cursor:pointer}.opt.correct{background:#e8f5ec;border-color:var(--green);color:var(--green)}.opt.wrong{background:#fbeae8;border-color:var(--coral);color:var(--coral)}.feedback{display:none;margin-top:12px;padding:11px 13px;border-radius:10px;font-size:13px;font-weight:700}.feedback.show{display:block}.feedback.ok{background:#e8f5ec;color:var(--green)}.feedback.no{background:#fbeae8;color:var(--coral)}.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:15px;gap:10px}.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:900;cursor:pointer;background:var(--navy);color:#fff}.progress{height:7px;background:#eee2cd;border-radius:9px;overflow:hidden;margin-bottom:14px}.progress>span{display:block;height:100%;width:0;background:var(--coral)}.result{text-align:center}.result .big{font-size:40px;font-weight:900;color:var(--navy)}.tip{margin-top:14px;background:#fbf6ea;border:2px dashed var(--gold);padding:13px 14px;border-radius:11px;text-align:left;font-size:13px;font-weight:700;line-height:1.5}footer{text-align:center;color:#9a9182;font-size:12px;margin-top:24px}@media(min-width:700px){.topic{width:calc(50% - 4px)}.wrap{padding-top:20px}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero"><span class="tag">JUNIOR isiZULU · PHASE 5</span><h1>Taalhuis Junior isiZulu</h1><p>Umkhuba olula noweselula wokufunda amagama, imibuzo, ubuningi, ukuphika nokwakha imisho — Grade 3–7.</p><div class="nav"><a href="index.html">← Taalhuis home</a><a href="isizulu.html">isiZulu 8–12</a></div></section>
+
+<section class="panel"><h2>1. Khetha ibanga / Choose grade</h2><div class="grades" id="grades"></div></section>
+<section class="panel" id="topicPanel"><h2>2. Khetha isihloko / Choose a topic</h2><p class="muted" id="gradeHint">Khetha ibanga kuqala.</p><div class="topics hidden" id="topics"></div></section>
+<section class="panel hidden" id="quizPanel"><div class="progress"><span id="progress"></span></div><div id="quiz"></div></section>
+<section class="panel hidden" id="resultPanel"></section>
+<footer>Taalhuis Junior isiZulu · Phase 5 · Practice module</footer>
+</div>
+<script>
+const BANK={
+3:[
+ {name:'Amagama okubingelela',qs:[
+  q('Khetha ukubingelela okufanele uma ubona umuntu ekuseni.', ['Sawubona','Hamba kahle','Ngiyabonga','Uxolo'],0,'“Sawubona” isho ukubingelela umuntu; “hamba kahle” kusetshenziswa uma umuntu ehamba.'),
+  q('Khetha impendulo efanele: “Sawubona!”', ['Sawubona!','Sala kahle!','Cha!','Nini?'],0,'Impendulo elula ku-“Sawubona” ingu-“Sawubona”.')
+ ]},
+ {name:'Amagama emibuzo',qs:[
+  q('Yiliphi igama lombuzo elisho “who”?',['Ubani?','Kuphi?','Nini?','Yini?'],0,'“Ubani?” ubuza ngomuntu — “who?”.'),
+  q('Yiliphi igama lombuzo elisho “where”?',['Nini?','Kuphi?','Ubani?','Kungani?'],1,'“Kuphi?” ubuza ngendawo — “where?”.')
+ ]},
+ {name:'Imisho elula',qs:[
+  q('Khetha umusho oqondile.',['Umfana uyafunda.','Uyafunda umfana?','Umfana incwadi uyafunda.','Uyafunda incwadi umfana.'],0,'“Umfana uyafunda.” ngumusho olula nowemvelo.'),
+  q('Khetha umusho oneSihloko + Isenzo + Into.',['USipho uphuza amanzi.','Amanzi uphuza uSipho.','USipho amanzi uphuza.','Upuza amanzi uSipho.'],0,'USipho = isihloko, uphuza = isenzo, amanzi = into.')
+ ]}
+],
+4:[
+ {name:'Imibuzo nokuqonda',qs:[
+  q('“Kungani?” ubuza ini?',['Isizathu','Indawo','Umuntu','Isikhathi'],0,'“Kungani?” ubuza ngesizathu — “why?”.'),
+  q('“Nini?” ubuza ini?',['Isikhathi','Indawo','Umuntu','Into'],0,'“Nini?” ubuza ngesikhathi — “when?”.')
+ ]},
+ {name:'Ubuningi',qs:[
+  q('Ubuningi buka “umfana” yibuphi?',['abafana','amfana','imfana','umfana'],0,'umfana → abafana.'),
+  q('Ubuningi buka “umuntu” yibuphi?',['abantu','imuntu','umuntuzi','omuntu'],0,'umuntu → abantu.')
+ ]},
+ {name:'Ukuphika okulula',qs:[
+  q('Khetha umusho ophikayo: “Umfana uyafunda.”',['Umfana akafundi.','Umfana akafunda.','Umfana akafundanga.','Umfana akayi funda.'],0,'Esikhathini samanje, “uyafunda” iba “akafundi”.')
+ ]}
+],
+5:[
+ {name:'Ukwakha imisho',qs:[
+  q('Khetha umusho oqondile.',['Intombazane ifunda incwadi.','Ifunda intombazane incwadi.','Incwadi intombazane ifunda.','Intombazane incwadi ifunda.'],0,'Intombazane = isihloko, ifunda = isenzo, incwadi = into.'),
+  q('Yikuphi okulandelana kahle: “Sipho / udlala / ibhola”?',['USipho udlala ibhola.','Udla ibhola uSipho.','USipho ibhola udlala.','Ibhola uSipho udlala.'],0,'Uhlelo olusobala: isihloko + isenzo + into.')
+ ]},
+ {name:'Ubuningi',qs:[
+  q('Ubuningi be “isitolo” yibuphi?',['izitolo','amatolo','izitolozi','abatholo'],0,'isitolo → izitolo.'),
+  q('Ubuningi be “intombazane” yibuphi?',['amantombazane','abintombazane','izintombazane','omantombazane'],0,'intombazane → amantombazane.')
+ ]},
+ {name:'Amagama emibuzo',qs:[
+  q('“Kanjani?” kusho ini?',['How?','Who?','Where?','When?'],0,'“Kanjani?” kubuza indlela into eyenziwa ngayo — “how?”.'),
+  q('“Yini?” kusho ini?',['What?','Why?','Who?','Where?'],0,'“Yini?” kubuza ngento — “what?”.')
+ ]}
+],
+6:[
+ {name:'Ukuphika',qs:[
+  q('Khetha ukuphika okulungile: “Abantwana bayadlala.”',['Abantwana abadlali.','Abantwana abayadlala.','Abantwana abadlala.','Abantwana abayidlala.'],0,'“bayadlala” iba “abadlali” ekuphikeni kwesikhathi samanje.'),
+  q('Khetha umusho ophikayo: “USipho ufunda incwadi.”',['USipho akafundi incwadi.','USipho akufunda incwadi.','USipho akafundanga incwadi.','USipho akayifunda incwadi.'],0,'Lapha sisebenzisa ukuphika kwesenzo samanje: akafundi.')
+ ]},
+ {name:'Isabizwana namagama abantu',qs:[
+  q('Yisiphi isabizwana somuntu wokuqala oyedwa?',['Mina','Wena','Yena','Thina'],0,'“Mina” = I/me.'),
+  q('Yisiphi isabizwana sabantu abaningi abahlanganisa umuntu okhulumayo?',['Thina','Nina','Bona','Wena'],0,'“Thina” = we/us.')
+ ]},
+ {name:'Ukuqonda umbhalo omfushane',qs:[
+  q('Funda: “USipho uya esikoleni nsuku zonke.” Uya kuphi uSipho?',['Esikoleni','Emakethe','Ekhaya','Epaki'],0,'Umbhalo uthi uSipho uya esikoleni.')
+ ]}
+],
+7:[
+ {name:'Imisho nezenzo',qs:[
+  q('Khetha umusho oqondile nowemvelo.',['Abafundi babhala izivivinyo.','Babhalwa abafundi izivivinyo.','Abafundi izivivinyo babhala.','Izivivinyo abafundi babhala.'],0,'Abafundi = isihloko, babhala = isenzo, izivivinyo = into.'),
+  q('Khetha indlela efanele yokuphika: “Abafundi babhala izivivinyo.”',['Abafundi ababhali izivivinyo.','Abafundi ababhala izivivinyo.','Abafundi abayibhali izivivinyo.','Abafundi ababhala izivivinyo.'],0,'“babhalа” iba “ababhali” ekuphikeni kwesikhathi samanje.')
+ ]},
+ {name:'Imibuzo yokufunda',qs:[
+  q('Yiliphi igama elibuza ngesizathu?',['Kungani?','Kuphi?','Ubani?','Nini?'],0,'“Kungani?” ubuza ngesizathu.'),
+  q('Yiliphi igama elibuza ngendlela?',['Kanjani?','Ubani?','Nini?','Yini?'],0,'“Kanjani?” ubuza ngendlela noma indlela yokwenza into.')
+ ]},
+ {name:'Amagama nokuqonda',qs:[
+  q('“Abafundi” kusho ini?',['Learners/students','Teachers','Books','Classrooms'],0,'“Abafundi” kubhekisa kubafundi noma kubafundi besikole.'),
+  q('“Uthisha” kusho ini?',['Teacher','Student','Parent','Book'],0,'“Uthisha” = teacher.')
+ ]}
+]
+};
+function q(text,opts,c,explain){return{text,opts,c,explain}}
+let grade=null,topic=null,questions=[],idx=0,score=0,answered=false;
+const gradesEl=document.getElementById('grades'),topicsEl=document.getElementById('topics'),gradeHint=document.getElementById('gradeHint'),quizPanel=document.getElementById('quizPanel'),resultPanel=document.getElementById('resultPanel'),quizEl=document.getElementById('quiz'),progress=document.getElementById('progress');
+[3,4,5,6,7].forEach(g=>{const b=document.createElement('button');b.className='pill';b.textContent='Grade '+g;b.addEventListener('click',()=>{gradesEl.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));b.classList.add('active');grade=g;renderTopics();});gradesEl.appendChild(b)});
+function renderTopics(){gradeHint.textContent='Grade '+grade+' · khetha isihloko';topicsEl.innerHTML='';topicsEl.classList.remove('hidden');BANK[grade].forEach((t,i)=>{const b=document.createElement('button');b.className='topic';b.innerHTML='<strong>'+t.name+'</strong><span>'+t.qs.length+' imibuzo</span>';b.addEventListener('click',()=>startTopic(i));topicsEl.appendChild(b)})}
+function startTopic(i){topic=BANK[grade][i];questions=topic.qs.map(x=>({...x}));idx=0;score=0;answered=false;resultPanel.classList.add('hidden');quizPanel.classList.remove('hidden');renderQ();quizPanel.scrollIntoView({behavior:'smooth'})}
+function renderQ(){const q=questions[idx];progress.style.width=Math.round((idx/questions.length)*100)+'%';quizEl.innerHTML='<div class="qmeta">Grade '+grade+' · '+topic.name+' · Umbuzo '+(idx+1)+' / '+questions.length+'</div><div class="qtext">'+q.text+'</div><div class="opts" id="opts"></div><div class="feedback" id="fb"></div><div class="qnav"><span class="muted">Score: '+score+'</span><button class="btn" id="next" disabled>Okulandelayo →</button></div>';const opts=document.getElementById('opts');q.opts.forEach((o,i)=>{const el=document.createElement('div');el.className='opt';el.textContent=o;el.addEventListener('click',()=>answer(i));opts.appendChild(el)});document.getElementById('next').addEventListener('click',()=>{idx++;if(idx>=questions.length)finish();else{answered=false;renderQ()}})}
+function answer(i){if(answered)return;answered=true;const q=questions[idx],opts=[...document.querySelectorAll('.opt')];if(i===q.c){opts[i].classList.add('correct');score++}else{opts[i].classList.add('wrong');opts[q.c].classList.add('correct')}const fb=document.getElementById('fb');fb.textContent=(i===q.c?'✅ Kuhle! ':'❌ Zama futhi. ')+q.explain;fb.className='feedback show '+(i===q.c?'ok':'no');document.getElementById('next').disabled=false}
+function finish(){quizPanel.classList.add('hidden');progress.style.width='100%';const pct=Math.round(score/questions.length*100);localStorage.setItem('taalhuis_junior_isizulu_phase5',JSON.stringify({grade,topic:topic.name,score,total:questions.length,pct,at:new Date().toLocaleString('zu-ZA')}));resultPanel.classList.remove('hidden');resultPanel.innerHTML='<div class="result"><div class="big">'+score+' / '+questions.length+'</div><div class="muted">'+pct+'% · '+topic.name+'</div><div class="tip"><strong>Okulandelayo:</strong> Phinda lo mdlalo bese uzama ukuthuthukisa amaphuzu akho. Gxila kakhulu embuzweni lapho uthole khona impendulo engalungile.</div><button class="btn" id="again" style="margin-top:14px">Phinda futhi</button></div>';document.getElementById('again').addEventListener('click',()=>startTopic(BANK[grade].indexOf(topic)));resultPanel.scrollIntoView({behavior:'smooth'})}
+</script>
+</body>
+</html>
