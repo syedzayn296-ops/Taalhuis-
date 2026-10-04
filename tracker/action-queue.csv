@@ -1,0 +1,8 @@
+ID,Priority,Area,Action,Status,Due Date,Notes
+1,High,Development,Fix Grades 3-7 pronunciation accuracy,Open,,Known school feedback
+2,High,Development,Add synonyms antonyms plurals ontkennende vorm and SVO,Open,,Grades 3-7
+3,High,Development,Review Grade 8 tense word-order issue,Open,,Known reviewer feedback
+4,Medium,Development,Improve Junior question words and comprehension,Open,,Junior phase
+5,Medium,Development,Review Junior Zulu Phase 5,Open,,Future expansion
+6,High,Commercial,Continue school outreach and follow-ups,Open,,Log every contact and response
+7,Medium,Commercial,Convert validated school feedback into tracked fixes,Open,,Avoid feature creep

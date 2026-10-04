@@ -1,0 +1,7 @@
+ID,Area,Item,Status,Priority,Owner,Next Action,Due Date,Notes
+1,Product,Taalhuis Afrikaans Learning Platform,Live Prototype,High,Zayn,Continue V2.4-V2.5 improvements,,School-facing education product
+2,Development,Grades 3-7 Language Content,Needs Improvement,High,Zayn,Fix pronunciation and add synonyms antonyms plurals ontkennende vorm SVO,,Known feedback
+3,Development,Grade 8 Tenses,Needs Improvement,High,Zayn,Review tense word-order issue,,Feedback from school reviewer
+4,Development,Junior Content,Needs Improvement,Medium,Zayn,Add question words and comprehension improvements,,Junior phase
+5,Development,Junior Zulu,Needs Improvement,Medium,Zayn,Review Phase 5 content,,Future expansion
+6,Commercial,School Outreach,Active,High,Zayn,Continue targeted school outreach,,Track every contact and response
