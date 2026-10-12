@@ -35,6 +35,20 @@
   .hero .book{position:absolute;right:-10px;bottom:-24px;font-size:120px;opacity:0.12;}
 
   .section-title{font-size:20px;margin:32px 0 12px;color:var(--navy);}
+  .vocab-intro{background:#fff;border:2px solid #e7e1d2;border-radius:16px;padding:18px;margin:16px 0;line-height:1.5}
+  .vocab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px;margin:12px 0 20px}
+  .vocab-card{background:#fff;border:2px solid #e7e1d2;border-radius:15px;padding:16px}
+  .vocab-card h3{color:var(--navy);font-size:17px;margin:0 0 8px}
+  .vocab-word{padding:9px 0;border-top:1px solid #eee8dc;font-size:13px;line-height:1.45}
+  .vocab-word strong{color:var(--navy);display:block;font-size:14px}
+  .vocab-example,.vocab-practice{background:#f7f5ef;border-radius:10px;padding:10px;margin-top:12px;font-size:13px;line-height:1.5}
+  .vocab-options{display:grid;gap:7px}
+  .vocab-option{background:white;border:2px solid #e7e1d2;border-radius:9px;padding:9px 11px;text-align:left;cursor:pointer;font:inherit;font-size:13px}
+  .vocab-option.correct{border-color:var(--green);background:#e8f5ec}
+  .vocab-option.wrong{border-color:var(--coral);background:#fbeae8}
+  .vocab-feedback{display:none;border-radius:9px;padding:10px;margin-top:9px;font-size:13px;line-height:1.45}
+  .vocab-feedback.show{display:block;background:#e8f5ec}
+  .vocab-next{margin-top:10px;background:var(--navy);color:white;border:0;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}
 
   .grade-row{display:flex;flex-wrap:wrap;gap:10px;}
   .grade-pill{
