@@ -795,8 +795,43 @@ function renderSkillTabs(){
   renderTopics();
 }
 
+
+const GRADE9_VOCAB = [
+ {title:"Family and relationships",words:[["die familielid","family member"],["die verhouding","relationship"],["ondersteun","to support"],["betroubaar","reliable / trustworthy"]],example:"My vriende ondersteun my wanneer ek sukkel.",translation:"My friends support me when I struggle.",questions:[["What does “ondersteun” mean?",["to support","to avoid","to forget"],0,"“Ondersteun” means “to support”. The sentence says the friends support the speaker."],["Which word means reliable?",["verhouding","betroubaar","familielid"],1,"“Betroubaar” means reliable or trustworthy."]]},
+ {title:"Food and meals",words:[["die ontbyt","breakfast"],["die bestanddeel","ingredient"],["gesond","healthy"],["voorberei","to prepare"]],example:"Ons help om die aandete voor te berei.",translation:"We help prepare supper.",questions:[["What does “bestanddeel” mean?",["ingredient","dessert","plate"],0,"A “bestanddeel” is an ingredient used to make a dish."],["Which word means to prepare?",["gesond","voorberei","ontbyt"],1,"“Voorberei” means to prepare or get something ready."]]},
+ {title:"School and daily life",words:[["die opdrag","instruction / task"],["verduidelik","to explain"],["verbeter","to improve"],["die poging","attempt / effort"]],example:"Lees die opdrag voordat jy begin skryf.",translation:"Read the instruction before you start writing.",questions:[["What does “verduidelik” mean?",["to explain","to compare","to copy"],0,"“Verduidelik” means explain: make an idea or answer clear."],["Which word means improve?",["poging","opdrag","verbeter"],2,"“Verbeter” means to improve or correct."]]}
+];
+
+function renderVocabCoach(){
+ const host=document.getElementById("vocabCoach"); host.replaceChildren();
+ if(String(currentGrade)!=="9"||currentSkill!=="vocab") return;
+ const intro=document.createElement("div"); intro.className="vocab-intro";
+ intro.innerHTML="<h3>Learn the meaning first · Leer eers die betekenis</h3><p>1. Read the English meaning. 2. Study the Afrikaans example. 3. Read its English translation. 4. Answer the practice questions and get feedback.</p>";
+ host.appendChild(intro);
+ const grid=document.createElement("div"); grid.className="vocab-grid";
+ GRADE9_VOCAB.forEach(theme=>{
+  const card=document.createElement("section"); card.className="vocab-card";
+  const heading=document.createElement("h3"); heading.textContent=theme.title; card.appendChild(heading);
+  theme.words.forEach(w=>{const row=document.createElement("div");row.className="vocab-word";const term=document.createElement("strong");term.textContent=w[0];const meaning=document.createElement("span");meaning.textContent="English: "+w[1];row.append(term,meaning);card.appendChild(row);});
+  const example=document.createElement("div");example.className="vocab-example";example.textContent="Afrikaans example: "+theme.example+" English translation: "+theme.translation;card.appendChild(example);
+  const practice=document.createElement("div");practice.className="vocab-practice";card.appendChild(practice);
+  let qi=0,score=0,locked=false;
+  function draw(){
+   locked=false;practice.replaceChildren();const item=theme.questions[qi];
+   const label=document.createElement("div");label.className="vocab-question";label.textContent="Practice "+(qi+1)+"/"+theme.questions.length+": "+item[0];practice.appendChild(label);
+   const opts=document.createElement("div");opts.className="vocab-options";practice.appendChild(opts);
+   const feedback=document.createElement("div");feedback.className="vocab-feedback";practice.appendChild(feedback);
+   item[1].forEach((text,index)=>{const btn=document.createElement("button");btn.type="button";btn.className="vocab-option";btn.textContent=text;btn.addEventListener("click",()=>{if(locked)return;locked=true;const ok=index===item[2];if(ok){score++;btn.classList.add("correct");}else{btn.classList.add("wrong");opts.children[item[2]].classList.add("correct");}feedback.textContent=(ok?"Good work! ":"Not quite. ")+item[3];feedback.classList.add("show");next.classList.remove("hidden");});opts.appendChild(btn);});
+   const next=document.createElement("button");next.type="button";next.className="vocab-next hidden";next.textContent=qi===theme.questions.length-1?"Finish practice":"Next question →";next.addEventListener("click",()=>{if(qi<theme.questions.length-1){qi++;draw();}else{practice.replaceChildren();const result=document.createElement("strong");result.textContent="Practice complete: "+score+" / "+theme.questions.length;practice.appendChild(result);}});practice.appendChild(next);
+  }
+  draw();grid.appendChild(card);
+ });
+ host.appendChild(grid);
+}
+
 function renderTopics(){
   topicList.innerHTML = '';
+  renderVocabCoach();
   quizSection.classList.add('hidden');
   const topics = (DATA[currentGrade] && DATA[currentGrade][currentSkill]) || [];
   if(topics.length === 0){
