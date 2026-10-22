@@ -1,4 +1,4 @@
-# Taalhuis — Notes
+# Taalhuis â€” Notes
 
 ## Current State
 - Existing Taalhuis prototype cloned from GitHub.
@@ -18,6 +18,7 @@
 - Outreach history must be recorded in the product repository.
 - Every future contact, response and follow-up should be logged.
 - Feedback should be converted into specific tracked fixes.
+- **WCED (22 October 2026):** Joey B. Klaaste-Salmans, Deputy Chief Education Specialist: Senior Phase Languages, proposed revisiting the meeting in February 2027. Immanuel Europa was copied. The postponement reflects year-end academic commitments, 2027 planning, NSC examinations, and Grade 9 GEC November-test preparation and moderation. Status: postponed, not rejected; no exact date or time is agreed. Keep the opportunity open and revisit scheduling in February 2027 without pushing during the current busy period. The intended next step remains a short Taalhuis walkthrough and feedback on relevance to WCED Senior Phase language-learning requirements.
 
 ## Operating Principle
 Build from real school and educator feedback rather than adding features for the sake of adding features.
